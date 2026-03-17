@@ -1,9 +1,3 @@
-# Skills for Vibe Motion
-
-A collection of skills for vibe motion workflows. Skills are packaged instructions and scripts that extend agent capabilities.
-
-Skills follow the [Agent Skills](https://agentskills.io/) format.
-
 ## Installation
 
 ```bash

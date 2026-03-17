@@ -16,6 +16,20 @@ npx skills add vibe-motion/skills
 
 Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.
 
+**Effect:**
+- Delivers a strong "power + speed" assembly look from static vectors.
+
+<table>
+  <tr>
+    <td align="center"><strong>SVG</strong></td>
+    <td align="center"><strong>GIF</strong></td>
+  </tr>
+  <tr>
+    <td><img src="https://img.laosunwendao.com/ship.svg" alt="ship svg" width="256" /></td>
+    <td><img src="https://img.laosunwendao.com/ship_30fps_whitebg.gif" alt="ship gif 30fps white background" width="256" height="256" /></td>
+  </tr>
+</table>
+
 **Use when:**
 - Turning a static SVG into a dynamic assembly animation.
 - Producing transparent frame sequences for AE/PR compositing.

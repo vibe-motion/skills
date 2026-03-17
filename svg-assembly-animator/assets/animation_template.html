@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SVG Assembly Animation Template</title>
+<style>
+  body {
+    margin: 0; padding: 0; display: flex; justify-content: center; align-items: center; height: 100vh;
+    overflow: hidden; font-family: system-ui, -apple-system, sans-serif;
+    /* Checkerboard background to indicate transparency */
+    background-color: #f4f4f5; background-image: 
+      linear-gradient(45deg, #e4e4e7 25%, transparent 25%), linear-gradient(-45deg, #e4e4e7 25%, transparent 25%), 
+      linear-gradient(45deg, transparent 75%, #e4e4e7 75%), linear-gradient(-45deg, transparent 75%, #e4e4e7 75%);
+    background-size: 20px 20px; background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  }
+  .container { position: relative; width: 600px; height: 600px; display: flex; justify-content: center; align-items: center; }
+  svg { width: 100%; height: 100%; overflow: visible; }
+  .controls { position: absolute; bottom: 30px; display: flex; gap: 15px; z-index: 10; }
+  button { padding: 10px 20px; background: white; border: 1px solid #18181b; border-radius: 6px; cursor: pointer; font-weight: bold; }
+  #status { position: absolute; bottom: 80px; font-size: 14px; background: rgba(255,255,255,0.9); padding: 5px 15px; border-radius: 4px; display: none; }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</head>
+<body>
+<div class="container">
+  <!-- INSERT_SVG_HERE -->
+</div>
+<div id="status">Exporting...</div>
+<div class="controls">
+  <button onclick="playAnimation()">Replay</button>
+  <button id="export-btn" onclick="exportSequence()">Export Transparent Sequence (30fps)</button>
+</div>
+<script>
+  let tl;
+  function initAnimation() {
+    const scene = document.querySelector("#scene") || document.querySelector("svg");
+    const paths = Array.from(document.querySelectorAll("path"));
+    const hull = paths[0]; const parts = paths.slice(1);
+    gsap.set([scene, ...paths], { transformOrigin: "50% 50%" });
+    
+    // Initial Broken State (Reverse logic)
+    gsap.set(hull, { opacity: 0, scale: 0.2 });
+    parts.forEach(part => {
+      const angle = Math.random() * Math.PI * 2;
+      const distance = 8000 + Math.random() * 10000;
+      gsap.set(part, { opacity: 0, x: Math.cos(angle) * distance, y: Math.sin(angle) * distance, scaleX: 0.05, scaleY: 4, rotation: 90 });
+    });
+
+    tl = gsap.timeline({ paused: true });
+    // Core Animation Workflow
+    tl.fromTo(scene, { rotation: -180, scale: 0.1 }, { rotation: 0, scale: 1, duration: 3, ease: "power4.out" }, 0);
+    tl.to(hull, { opacity: 1, scale: 1, duration: 1.5, ease: "elastic.out(1, 0.5)" }, 0.2);
+    tl.to(parts, { opacity: 1, x: 0, y: 0, scaleX: 1, scaleY: 1, rotation: 0, duration: 1.2, stagger: { each: 0.012, from: "random" }, ease: "back.out(2)" }, 0.5);
+  }
+
+  function playAnimation() { if (tl) tl.kill(); initAnimation(); tl.play(); }
+
+  async function exportSequence() {
+    if (!tl) return;
+    const btn = document.getElementById('export-btn'); const status = document.getElementById('status');
+    btn.disabled = true; status.style.display = 'block'; tl.pause();
+    const fps = 30; const totalFrames = Math.ceil(tl.duration() * fps);
+    const zip = new JSZip(); const folder = zip.folder("animation_frames");
+    const canvas = document.createElement('canvas'); canvas.width = 1080; canvas.height = 1080;
+    const ctx = canvas.getContext('2d'); const svg = document.querySelector("svg");
+    for(let i = 0; i <= totalFrames; i++) {
+      status.innerText = `Rendering: ${i} / ${totalFrames}`;
+      tl.progress(i / totalFrames);
+      svg.setAttribute('width', canvas.width); svg.setAttribute('height', canvas.height);
+      const svgData = new XMLSerializer().serializeToString(svg);
+      const url = URL.createObjectURL(new Blob([svgData], {type: "image/svg+xml;charset=utf-8"}));
+      await new Promise(r => {
+        const img = new Image(); img.onload = () => {
+          ctx.clearRect(0, 0, canvas.width, canvas.height); ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          folder.file(`frame_${i.toString().padStart(4, '0')}.png`, canvas.toDataURL("image/png").split(',')[1], {base64: true});
+          URL.revokeObjectURL(url); r();
+        }; img.src = url;
+      });
+    }
+    const content = await zip.generateAsync({type: "blob"});
+    const a = document.createElement("a"); a.href = URL.createObjectURL(content); a.download = "frames.zip"; a.click();
+    status.innerText = "Done!"; btn.disabled = false; tl.play();
+  }
+  document.addEventListener("DOMContentLoaded", playAnimation);
+</script>
+</body>
+</html>

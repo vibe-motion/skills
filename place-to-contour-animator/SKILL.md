@@ -1,3 +1,4 @@
+---
 name: place-to-contour-animator
 description: Generate `godot_line2d_v1` outer-contour JSON from a user-provided place name by calling the charts project exporter. Use when the user asks to export map outlines/contours into `line2d.json` for Godot Line2D, especially requests like “给一个地名生成 line2d.json”, “导出某国家外轮廓”, “按地区生成轮廓 JSON”, or “做可动画的外轮廓”.
 ---

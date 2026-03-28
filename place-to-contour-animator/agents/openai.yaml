@@ -1,4 +1,0 @@
-interface:
-  display_name: "Place to Contour Animator"
-  short_description: "Generate animation-ready Godot contour JSON from place names"
-  default_prompt: "Convert a place name into a godot_line2d_v1 outer-contour JSON export for visual/animation workflows."

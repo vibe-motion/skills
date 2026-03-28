@@ -34,6 +34,23 @@ Create high-impact, high-speed SVG part-assembly animations and export 30fps tra
 - Uses GSAP for staggered, overshoot-based assembly motion.
 - Exports transparent PNG sequences (ZIP) via JSZip + Canvas.
 
+### claude-typer
+
+Render a Claude-style prompt typing animation video from plain text prompts.
+
+**Effect:**
+- Converts prompt text into a Claude-like typing animation demo.
+
+![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
+
+**Use when:**
+- Creating skill demos from prompt content.
+- Producing Claude-style typing visuals for social/media clips.
+
+**Core capabilities:**
+- Uses Remotion-based rendering workflow.
+- Runs deterministic frame interpolation suitable for parallel/out-of-order rendering.
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

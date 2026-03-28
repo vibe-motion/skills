@@ -1,36 +1,36 @@
-[中文](./readme.zh.md) | [English](./README.md)
+[中文](./README.md) | [English](./README.en.md)
 
-## Installation
+## 安装
 
 ```bash
 npx skills add vibe-motion/skills
 ```
 
-## Available Skills
+## 可用技能
 
 ### claude-typer
 
-Render a Claude Code CLI prompt typing animation video from plain text prompts.
+将纯文本提示词渲染为 Claude Code CLI 输入提示词的打字动画视频。
 
-**Effect:**
-- Converts prompt text into a Claude Code CLI typing animation demo.
+**效果：**
+- 把提示词文本转换为 Claude Code CLI 风格的打字动画演示。
 
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
-**Use when:**
-- Creating skill demos from prompt content.
-- Producing prompt-typing visuals that depict text being entered in Claude Code.
+**适用场景：**
+- 基于提示词内容制作技能演示。
+- 产出展示“在 Claude Code 中输入提示词”过程的打字动效。
 
-**Core capabilities:**
-- Uses a Remotion-based rendering workflow against a remote composition.
-- Runs deterministic frame interpolation suitable for parallel/out-of-order rendering.
+**核心能力：**
+- 使用基于 Remotion 的渲染流程，对远端 composition 进行渲染。
+- 使用确定性逐帧插值，适配并行/乱序渲染。
 
 ### svg-assembly-animator
 
-Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.
+创建高冲击力、高速度感的 SVG 零件组装动画，并导出 30fps 透明背景 PNG 序列帧，适用于视频合成工作流。
 
-**Effect:**
-- Delivers a strong "power + speed" assembly look from static vectors.
+**效果：**
+- 将静态矢量图转化为“力量感 + 速度感”明显的组装动效。
 
 <table>
   <tr>
@@ -43,15 +43,15 @@ Create high-impact, high-speed SVG part-assembly animations and export 30fps tra
   </tr>
 </table>
 
-**Use when:**
-- Turning a static SVG into a dynamic assembly animation.
-- Producing transparent frame sequences for AE/PR compositing.
-- Needing a quick HTML preview plus one-click export workflow.
+**适用场景：**
+- 将静态 SVG 转成动态组装动画。
+- 为 AE/PR 合成输出透明序列帧。
+- 需要快速 HTML 预览与一键导出流程。
 
-**Core capabilities:**
-- Builds animation output from `assets/animation_template.html`.
-- Uses GSAP for staggered, overshoot-based assembly motion.
-- Exports transparent PNG sequences (ZIP) via JSZip + Canvas.
+**核心能力：**
+- 基于 `assets/animation_template.html` 构建动画输出。
+- 使用 GSAP 实现交错（stagger）与回弹（overshoot）式组装运动。
+- 通过 JSZip + Canvas 导出透明 PNG 序列（ZIP）。
 
 ## Star History
 

@@ -1,4 +1,4 @@
-[中文](./readme.zh.md) | [English](./README.md)
+[中文](./README.md) | [English](./README.en.md)
 
 ## 安装
 

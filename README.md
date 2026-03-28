@@ -1,3 +1,5 @@
+[中文](./readme.zh.md) | [English](./README.md)
+
 ## Installation
 
 ```bash

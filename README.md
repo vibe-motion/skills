@@ -6,6 +6,23 @@ npx skills add vibe-motion/skills
 
 ## Available Skills
 
+### claude-typer
+
+Render a Claude Code CLI prompt typing animation video from plain text prompts.
+
+**Effect:**
+- Converts prompt text into a Claude Code CLI typing animation demo.
+
+![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
+
+**Use when:**
+- Creating skill demos from prompt content.
+- Producing prompt-typing visuals that depict text being entered in Claude Code.
+
+**Core capabilities:**
+- Uses a Remotion-based rendering workflow against a remote composition.
+- Runs deterministic frame interpolation suitable for parallel/out-of-order rendering.
+
 ### svg-assembly-animator
 
 Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.
@@ -33,23 +50,6 @@ Create high-impact, high-speed SVG part-assembly animations and export 30fps tra
 - Builds animation output from `assets/animation_template.html`.
 - Uses GSAP for staggered, overshoot-based assembly motion.
 - Exports transparent PNG sequences (ZIP) via JSZip + Canvas.
-
-### claude-typer
-
-Render a Claude-style prompt typing animation video from plain text prompts.
-
-**Effect:**
-- Converts prompt text into a Claude-like typing animation demo.
-
-![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
-
-**Use when:**
-- Creating skill demos from prompt content.
-- Producing Claude-style typing visuals for social/media clips.
-
-**Core capabilities:**
-- Uses Remotion-based rendering workflow.
-- Runs deterministic frame interpolation suitable for parallel/out-of-order rendering.
 
 ## Star History
 

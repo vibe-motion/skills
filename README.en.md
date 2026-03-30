@@ -22,8 +22,10 @@ Render a Claude Code CLI prompt typing animation video from plain text prompts.
 - Producing prompt-typing visuals that depict text being entered in Claude Code.
 
 **Core capabilities:**
-- Uses a Remotion-based rendering workflow against a remote composition.
-- Runs deterministic frame interpolation suitable for parallel/out-of-order rendering.
+- Calls Remotion CLI to render a remote composition.
+- Outputs transparent-background ProRes 4444 MOV format videos by default.
+- Smartly extracts the core prompt content as the output file name.
+- Supports customizing render parameters like video dimensions, Claude window size, and passing through unknown CLI arguments.
 
 ### svg-assembly-animator
 

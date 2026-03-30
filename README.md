@@ -22,8 +22,10 @@ npx skills add vibe-motion/skills
 - 产出展示“在 Claude Code 中输入提示词”过程的打字动效。
 
 **核心能力：**
-- 使用基于 Remotion 的渲染流程，对远端 composition 进行渲染。
-- 使用确定性逐帧插值，适配并行/乱序渲染。
+- 调用 Remotion CLI 对远端 composition 进行渲染。
+- 默认输出带有透明背景的 ProRes 4444 MOV 格式视频。
+- 智能提取提示词核心内容作为输出文件名。
+- 支持自定义视频尺寸、Claude 窗口大小等渲染参数，并支持透传未知 CLI 参数。
 
 ### svg-assembly-animator
 

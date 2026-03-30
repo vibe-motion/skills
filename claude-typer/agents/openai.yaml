@@ -1,0 +1,4 @@
+interface:
+  display_name: "Claude Typer"
+  short_description: "Render Claude prompt typing animation via Remotion"
+  default_prompt: "做一个 claude 的提示词打字机动画"

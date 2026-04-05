@@ -46,6 +46,20 @@ Render a parameterized procedural fish swimming animation, with transparent-back
 - Supports tuning speed, fish scale, orbit radius, and motion step precision.
 - Keeps animation frame-deterministic for parallel/out-of-order Remotion rendering.
 
+
+### procedural-fish-render
+
+Automatically clone or update `https://github.com/vibe-motion/procedural-fish`, then render a procedural-fish video using the project's own `pnpm run remotion:render` command.
+
+**Use when:**
+- Users ask to "render procedural fish" or export a procedural-fish video.
+- You need a consistent clone/pull + render workflow across environments.
+
+**Core capabilities:**
+- Clones repo if missing; otherwise runs `fetch + pull --ff-only`.
+- Uses the project's native render command instead of a custom replacement pipeline.
+- Supports output path, props file, composition id, and fps overrides.
+
 ### svg-assembly-animator
 
 Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.

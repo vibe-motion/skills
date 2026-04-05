@@ -46,6 +46,20 @@ npx skills add vibe-motion/skills
 - 支持调节速度、鱼体缩放、轨道半径与步进精度等参数。
 - 动画逻辑为逐帧可重算，兼容 Remotion 并行/乱序渲染。
 
+
+### procedural-fish-render
+
+自动拉取或更新 `https://github.com/vibe-motion/procedural-fish`，并调用项目内 `pnpm run remotion:render` 渲染程序鱼视频。
+
+**适用场景：**
+- 用户提到“渲染程序鱼”“生成 procedural fish 视频”等需求。
+- 需要统一地 clone/pull 后再渲染，避免环境差异导致命令不一致。
+
+**核心能力：**
+- 若本地无仓库则自动 clone，有仓库则自动 `fetch + pull --ff-only`。
+- 使用项目内原生命令渲染而非自定义替代管线。
+- 支持自定义输出路径、props 文件与 composition/fps 覆盖参数。
+
 ### svg-assembly-animator
 
 创建高冲击力、高速度感的 SVG 零件组装动画，并导出 30fps 透明背景 PNG 序列帧，适用于视频合成工作流。

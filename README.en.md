@@ -27,6 +27,25 @@ Render a Claude Code CLI prompt typing animation video from plain text prompts.
 - Smartly extracts the core prompt content as the output file name.
 - Supports customizing render parameters like video dimensions, Claude window size, and passing through unknown CLI arguments.
 
+### procedural-fish
+
+Render a parameterized procedural fish swimming animation, with transparent-background video output by default and optional GIF conversion for sharing.
+
+**Effect:**
+- Generates a loop-friendly procedural fish animation for skill demos and social previews.
+
+![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
+
+**Use when:**
+- You need a quick 480x480 procedural fish motion asset.
+- You want transparent ProRes 4444 output for AE/PR compositing.
+- You need a loopable GIF for README or product pages.
+
+**Core capabilities:**
+- Renders procedural fish animation frame-by-frame with Remotion.
+- Supports tuning speed, fish scale, orbit radius, and motion step precision.
+- Keeps animation frame-deterministic for parallel/out-of-order Remotion rendering.
+
 ### svg-assembly-animator
 
 Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.

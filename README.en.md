@@ -12,23 +12,17 @@ npx skills add vibe-motion/skills
 
 Converts prompt text into a Claude Code CLI typing animation demo.
 
-**Effect:**
-
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
 ### procedural-fish-render
 
-Generates a loop-friendly procedural fish animation for skill demos and social previews.
-
-**Effect:**
+Generates a loop-friendly procedural fish animation.
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
 
 ### svg-assembly-animator
 
 Delivers a strong "power + speed" assembly look from static vectors.
-
-**Effect:**
 
 <table>
   <tr>

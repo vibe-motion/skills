@@ -10,28 +10,25 @@ npx skills add vibe-motion/skills
 
 ### claude-typer
 
-Render a Claude Code CLI prompt typing animation video from plain text prompts.
+Converts prompt text into a Claude Code CLI typing animation demo.
 
 **Effect:**
-- Converts prompt text into a Claude Code CLI typing animation demo.
 
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
 ### procedural-fish-render
 
-Automatically clone or update `https://github.com/vibe-motion/procedural-fish`, then render a procedural-fish video using the project's own `pnpm run remotion:render` command.
+Generates a loop-friendly procedural fish animation for skill demos and social previews.
 
 **Effect:**
-- Generates a loop-friendly procedural fish animation for skill demos and social previews.
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
 
 ### svg-assembly-animator
 
-Create high-impact, high-speed SVG part-assembly animations and export 30fps transparent PNG frame sequences for video compositing workflows.
+Delivers a strong "power + speed" assembly look from static vectors.
 
 **Effect:**
-- Delivers a strong "power + speed" assembly look from static vectors.
 
 <table>
   <tr>

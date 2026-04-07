@@ -38,3 +38,11 @@ Delivers a strong "power + speed" assembly look from static vectors.
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
+
+## Community Group
+
+Scan the QR code to join the community group for updates, usage discussion, and feedback.
+
+<p align="center">
+  <img src="https://img.laosunwendao.com/skill-uploads/30cea60a79ae4c0f920c4fa0e8180ee2.jpg" alt="Community group QR code" width="176" />
+</p>

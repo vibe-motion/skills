@@ -38,3 +38,11 @@ npx skills add vibe-motion/skills
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
+
+## 交流群
+
+扫码加入交流群，获取更新通知、使用交流与问题反馈。
+
+<p align="center">
+  <img src="https://img.laosunwendao.com/skill-uploads/30cea60a79ae4c0f920c4fa0e8180ee2.jpg" alt="交流群二维码" width="176" />
+</p>

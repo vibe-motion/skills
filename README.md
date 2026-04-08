@@ -6,7 +6,15 @@
 npx skills add vibe-motion/skills
 ```
 
+> 提示：这是一个交互式安装脚本。用空格选择要安装的 skills，建议全部安装；另外别忘了选择对应的智能体（例如 Claude Code），不同智能体的 skill 存放路径不同。
+
 ## 可用技能
+
+### ruler-progress-render
+
+生成尺子进度动画。触发关键词：尺子进度动画；可配置文字和进度等参数。
+
+<img src="https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif" alt="ruler-progress effect" width="540" />
 
 ### claude-typer
 
@@ -19,12 +27,6 @@ npx skills add vibe-motion/skills
 生成循环游动的 procedural fish 动画。
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
-
-### ruler-progress-render
-
-生成尺子进度动画。触发关键词：尺子进度动画；可配置文字和进度等参数。
-
-![ruler-progress effect](https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif)
 
 ### svg-assembly-animator
 

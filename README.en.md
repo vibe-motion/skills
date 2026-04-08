@@ -6,7 +6,15 @@
 npx skills add vibe-motion/skills
 ```
 
+> Note: This is an interactive installer. Use `Space` to select skills (installing all is recommended), and make sure to choose the target agent (for example, Claude Code), since different agents use different skill directories.
+
 ## Available Skills
+
+### ruler-progress-render
+
+Creates a ruler progress animation. Trigger keyword: 尺子进度动画; supports configurable parameters such as text and progress.
+
+<img src="https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif" alt="ruler-progress effect" width="540" />
 
 ### claude-typer
 
@@ -19,12 +27,6 @@ Converts prompt text into a Claude Code CLI typing animation demo.
 Generates a loop-friendly procedural fish animation.
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
-
-### ruler-progress-render
-
-Creates a ruler progress animation. Trigger keyword: 尺子进度动画; supports configurable parameters such as text and progress.
-
-![ruler-progress effect](https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif)
 
 ### svg-assembly-animator
 

@@ -1,4 +1,6 @@
-[中文](./README.md) | [English](./README.en.md)
+<p align="right">
+  <a href="./README.md">简体中文</a> | English
+</p>
 
 ## Installation
 

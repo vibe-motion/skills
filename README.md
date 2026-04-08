@@ -20,6 +20,12 @@ npx skills add vibe-motion/skills
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
 
+### ruler-progress-render
+
+生成尺子进度动画。触发关键词：尺子进度动画；可配置文字和进度等参数。
+
+![ruler-progress effect](https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif)
+
 ### svg-assembly-animator
 
 将静态矢量图转化为“力量感 + 速度感”明显的组装动效。

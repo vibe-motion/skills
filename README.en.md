@@ -20,6 +20,12 @@ Generates a loop-friendly procedural fish animation.
 
 ![procedural-fish effect](https://img.laosunwendao.com/skill-uploads/96d88ab6cb9a4e1ca76abd73db08d888.gif)
 
+### ruler-progress-render
+
+Creates a ruler progress animation. Trigger keyword: 尺子进度动画; supports configurable parameters such as text and progress.
+
+![ruler-progress effect](https://img.laosunwendao.com/skill-uploads/916118e2be5c4b33a8c16f35a3b12200.gif)
+
 ### svg-assembly-animator
 
 Delivers a strong "power + speed" assembly look from static vectors.

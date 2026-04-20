@@ -28,7 +28,7 @@ Converts prompt text into a Claude Code CLI typing animation demo.
 
 Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
 
-<img src="./light-spotlight-render/assets/preview.png" alt="light spotlight effect" width="540" />
+<img src="./light-spotlight-render/assets/preview.gif" alt="light spotlight effect" width="540" />
 
 ### procedural-fish-render
 

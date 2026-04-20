@@ -28,7 +28,7 @@ npx skills add vibe-motion/skills
 
 生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。
 
-<img src="./light-spotlight-render/assets/preview.png" alt="light spotlight effect" width="540" />
+<img src="./light-spotlight-render/assets/preview.gif" alt="light spotlight effect" width="540" />
 
 ### procedural-fish-render
 

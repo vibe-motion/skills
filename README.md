@@ -24,12 +24,6 @@ npx skills add vibe-motion/skills
 
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
-### light-spotlight-render
-
-生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。
-
-<img src="./light-spotlight-render/assets/preview.gif" alt="light spotlight effect" width="540" />
-
 ### procedural-fish-render
 
 生成循环游动的 procedural fish 动画。
@@ -50,6 +44,12 @@ npx skills add vibe-motion/skills
     <td><img src="https://img.laosunwendao.com/ship_30fps_whitebg.gif" alt="ship gif 30fps white background" width="256" height="256" /></td>
   </tr>
 </table>
+
+### light-spotlight-render
+
+生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。
+
+<img src="./demo.gif" alt="light spotlight effect" width="540" />
 
 ## Star History
 

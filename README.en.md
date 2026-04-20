@@ -24,12 +24,6 @@ Converts prompt text into a Claude Code CLI typing animation demo.
 
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
-### light-spotlight-render
-
-Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
-
-<img src="./light-spotlight-render/assets/preview.gif" alt="light spotlight effect" width="540" />
-
 ### procedural-fish-render
 
 Generates a loop-friendly procedural fish animation.
@@ -50,6 +44,12 @@ Delivers a strong "power + speed" assembly look from static vectors.
     <td><img src="https://img.laosunwendao.com/ship_30fps_whitebg.gif" alt="ship gif 30fps white background" width="256" height="256" /></td>
   </tr>
 </table>
+
+### light-spotlight-render
+
+Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
+
+<img src="./demo.gif" alt="light spotlight effect" width="540" />
 
 ## Star History
 

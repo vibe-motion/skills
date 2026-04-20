@@ -1,0 +1,4 @@
+interface:
+  display_name: "Light Spotlight Render"
+  short_description: "Generate swinging spotlight text reveal HTML animation"
+  default_prompt: "做一个聚光灯扫字动画"

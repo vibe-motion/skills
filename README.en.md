@@ -24,6 +24,12 @@ Converts prompt text into a Claude Code CLI typing animation demo.
 
 ![claude-typer effect](https://img.laosunwendao.com/skill-uploads/3dbc047456374640bd00a078e22a5008.gif)
 
+### light-spotlight-render
+
+Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
+
+<img src="./light-spotlight-render/assets/preview.png" alt="light spotlight effect" width="540" />
+
 ### procedural-fish-render
 
 Generates a loop-friendly procedural fish animation.

@@ -49,7 +49,7 @@ Delivers a strong "power + speed" assembly look from static vectors.
 
 Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
 
-<img src="./demo.gif" alt="light spotlight effect" width="540" />
+<img src="light-spotlight-render/assets/demo.gif" alt="light spotlight effect" width="540" />
 
 ## Star History
 

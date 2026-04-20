@@ -49,7 +49,7 @@ npx skills add vibe-motion/skills
 
 生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。
 
-<img src="./demo.gif" alt="light spotlight effect" width="540" />
+<img src="light-spotlight-render/assets/demo.gif" alt="light spotlight effect" width="540" />
 
 ## Star History
 

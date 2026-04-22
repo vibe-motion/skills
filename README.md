@@ -54,5 +54,5 @@ npx skills add vibe-motion/skills
 扫码加入交流群，获取更新通知、使用交流与问题反馈。
 
 <p align="center">
-  <img src="https://img.laosunwendao.com/skill-uploads/81dc752be1e24957950989bf50dafcad.jpg" alt="交流群二维码" width="176" />
+  <img src="https://img.laosunwendao.com/skill-uploads/2cc89c8915b7413dbfdb615b234a594f.jpg" alt="交流群二维码" width="176" />
 </p>

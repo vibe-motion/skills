@@ -45,6 +45,12 @@ Delivers a strong "power + speed" assembly look from static vectors.
   </tr>
 </table>
 
+### light-spotlight-render
+
+Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.
+
+<img src="light-spotlight-render/assets/demo.gif" alt="light spotlight effect" width="540" />
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

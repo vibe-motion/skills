@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Light Spotlight Reveal</title>
+<style>
+  :root {
+    color-scheme: only light;
+  }
+
+  html,
+  body {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: __BACKGROUND_COLOR__;
+  }
+
+  svg {
+    width: min(100vw, __VIDEO_WIDTH__px);
+    height: auto;
+    max-height: min(100vh, __VIDEO_HEIGHT__px);
+    display: block;
+    visibility: hidden;
+    overflow: visible;
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+<body>
+  <svg id="mainSVG" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" aria-label="Light spotlight reveal">
+    <defs>
+      <filter id="glow" x="-100%" y="-100%" width="550%" height="550%">
+        <feGaussianBlur stdDeviation="0 19" result="coloredBlur"></feGaussianBlur>
+        <feOffset dx="0" dy="0" result="offsetblur"></feOffset>
+        <feFlood flood-color="__MASK_COLOR__" flood-opacity="__GLOW_OPACITY__"></feFlood>
+        <feComposite in2="offsetblur" operator="in"></feComposite>
+        <feMerge>
+          <feMergeNode></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+      <mask id="lightMask">
+        <g id="lampGroup">
+          <path
+            id="lamp"
+            d="m383,275.25l-29.1,37.09c-1.06,1.34-.1,3.31,1.61,3.31h88.99c1.71,0,2.67-1.97,1.61-3.31l-29.1-37.09c-8.65-11.03-25.35-11.03-34,0Z"
+            fill="#ffffff"
+            transform="translate(400 267) scale(__LAMP_SCALE__) translate(-400 -267)"
+          ></path>
+        </g>
+      </mask>
+    </defs>
+
+    <g fill="__TEXT_COLOR__">
+      <text
+        x="400"
+        y="330"
+        text-anchor="middle"
+        dominant-baseline="middle"
+        font-family='"JetBrains Mono Variable","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace'
+        font-size="118"
+        font-weight="800"
+        letter-spacing="-5.31"
+      >__LABEL_TEXT__</text>
+    </g>
+
+    <g mask="url(#lightMask)">
+      <g filter="url(#glow)" fill="__MASK_COLOR__">
+        <text
+          x="400"
+          y="330"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          font-family='"JetBrains Mono Variable","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace'
+          font-size="118"
+          font-weight="800"
+          letter-spacing="-5.31"
+        >__LABEL_TEXT__</text>
+      </g>
+      <g fill="__MASK_COLOR__">
+        <text
+          x="400"
+          y="330"
+          text-anchor="middle"
+          dominant-baseline="middle"
+          font-family='"JetBrains Mono Variable","JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace'
+          font-size="118"
+          font-weight="800"
+          letter-spacing="-5.31"
+        >__LABEL_TEXT__</text>
+      </g>
+    </g>
+  </svg>
+
+  <script>
+    gsap.set("#mainSVG", { visibility: "visible" });
+    gsap.fromTo(
+      "#lampGroup",
+      {
+        rotation: -__SWING_ANGLE_DEGREES__,
+        svgOrigin: "400 130"
+      },
+      {
+        duration: __HALF_SWING_DURATION_SECONDS__,
+        rotation: __SWING_ANGLE_DEGREES__,
+        svgOrigin: "400 130",
+        ease: "power1.inOut",
+        repeat: -1,
+        yoyo: true
+      }
+    );
+  </script>
+</body>
+</html>

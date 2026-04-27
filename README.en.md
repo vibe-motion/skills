@@ -63,6 +63,12 @@ Creates an elegant, realistic Vinyl Record Player animation in Remotion. Feature
 
 <img src="remotion-vinyl-player/assets/VinylPlayer.gif" alt="vinyl player effect" width="540" />
 
+### wechat-2d-render
+
+Clones or updates `sxhzju/wechat-2d` and renders the default WeChat-style 2D chat motion video. Useful for WeChat chat animation, video-message bubble motion, and transparent Remotion exports.
+
+<img src="wechat-2d-render/assets/wechat-2d-demo.gif" alt="wechat 2d chat motion effect" width="390" />
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

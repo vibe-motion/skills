@@ -51,6 +51,18 @@ Generates a swinging spotlight text-reveal HTML animation with configurable text
 
 <img src="light-spotlight-render/assets/demo.gif" alt="light spotlight effect" width="540" />
 
+### remotion-3d-ticker
+
+Creates an infinite 3D vertical scrolling photo wall/ticker animation in Remotion. Configurable image columns, scroll direction, and speed.
+
+<img src="remotion-3d-ticker/assets/VerticalTicker.gif" alt="3d ticker effect" width="540" />
+
+### remotion-vinyl-player
+
+Creates an elegant, realistic Vinyl Record Player animation in Remotion. Features infinite record rotation, seamless marquee text scrolling for long titles, and customizable album art.
+
+<img src="remotion-vinyl-player/assets/VinylPlayer.gif" alt="vinyl player effect" width="540" />
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

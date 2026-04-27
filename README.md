@@ -51,6 +51,18 @@ npx skills add vibe-motion/skills
 
 <img src="light-spotlight-render/assets/demo.gif" alt="light spotlight effect" width="540" />
 
+### remotion-3d-ticker
+
+生成基于 Remotion 的无限循环 3D 照片滚动墙/瀑布流动画。可自由配置图片列、滚动方向与速度。
+
+<img src="remotion-3d-ticker/assets/VerticalTicker.gif" alt="3d ticker effect" width="540" />
+
+### remotion-vinyl-player
+
+生成优雅逼真的黑胶唱片机/音乐播放器动画。支持自定义专辑封面、歌曲信息，并包含唱片无限旋转与文字无缝循环滚动（跑马灯）的视觉效果。
+
+<img src="remotion-vinyl-player/assets/VinylPlayer.gif" alt="vinyl player effect" width="540" />
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

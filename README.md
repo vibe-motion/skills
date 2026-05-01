@@ -75,8 +75,7 @@ npx skills add vibe-motion/skills
 
 ## 交流群
 
-微信群已满，后续请加入 TG 群交流，获取更新通知、使用交流与问题反馈。
-
+wechat群已满，后续可加入tg群交流: t.me/zjucat
 <p align="center">
   <img src="https://img.laosunwendao.com/skill-uploads/c6e7b3f9a1e74c129866a6846a2246ee.jpg" alt="TG 交流群二维码" width="176" />
 </p>

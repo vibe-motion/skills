@@ -63,6 +63,12 @@ Creates an elegant, realistic Vinyl Record Player animation in Remotion. Feature
 
 <img src="remotion-vinyl-player/assets/VinylPlayer.gif" alt="vinyl player effect" width="540" />
 
+### threejs-earth-render
+
+Clones or updates `vibe-motion/threejs-earth` and renders a Three.js 3D Earth route animation with Puppeteer. Useful for globe flight arcs, city-to-city transitions, and 16:9 Earth GIF/MP4 exports.
+
+<img src="threejs-earth-render/assets/earth.gif" alt="threejs earth route animation" width="448" />
+
 ### wechat-2d-render
 
 Clones or updates `sxhzju/wechat-2d` and renders the default WeChat-style 2D chat motion video. Useful for WeChat chat animation, video-message bubble motion, and transparent Remotion exports.

@@ -63,6 +63,12 @@ npx skills add vibe-motion/skills
 
 <img src="remotion-vinyl-player/assets/VinylPlayer.gif" alt="vinyl player effect" width="540" />
 
+### threejs-earth-render
+
+克隆或更新 `vibe-motion/threejs-earth`，并使用 Puppeteer 渲染 Three.js 3D 地球航线飞行动画。适用于地球飞线、城市航线转场和 16:9 地球动效 GIF/MP4 导出。
+
+<img src="threejs-earth-render/assets/earth.gif" alt="threejs earth route animation" width="448" />
+
 ### wechat-2d-render
 
 克隆或更新 `sxhzju/wechat-2d`，并渲染默认微信聊天 2D 动效视频。适用于微信聊天动画、视频消息气泡动效和透明背景 Remotion 导出。

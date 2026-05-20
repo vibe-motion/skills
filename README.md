@@ -79,9 +79,18 @@ npx skills add vibe-motion/skills
 
 [![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
 
-## 交流群
+## 交流
+
+### 交流群
 
 wechat群已满，后续可加入tg群交流: t.me/zjucat
 <p align="center">
   <img src="https://img.laosunwendao.com/skill-uploads/c6e7b3f9a1e74c129866a6846a2246ee.jpg" alt="TG 交流群二维码" width="176" />
+</p>
+
+### 科技/科普自媒体收徒（有偿）
+
+联系方式如下，备注：非诚勿扰。
+<p align="center">
+  <img src="https://img.laosunwendao.com/skill-uploads/49bbd79ea9554357a2b9a9e839748dcc.jpg" alt="科技/科普自媒体收徒联系方式二维码" width="176" />
 </p>

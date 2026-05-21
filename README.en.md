@@ -75,9 +75,15 @@ Clones or updates `sxhzju/wechat-2d` and renders the default WeChat-style 2D cha
 
 <img src="wechat-2d-render/assets/wechat-2d-demo.gif" alt="wechat 2d chat motion effect" width="390" />
 
-## Star History
+## Misc
 
-[![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
+### Fish School Simulation
+
+A Three.js boids fish school simulation project. This is a standalone project, not a skill.
+
+Project: [vibe-motion/threejs-boids](https://github.com/vibe-motion/threejs-boids)
+
+<img src="https://raw.githubusercontent.com/vibe-motion/threejs-boids/%E4%BA%A4%E4%BA%92%E9%B1%BC%E7%BC%B8/demo.gif" alt="threejs boids fish school simulation" width="540" />
 
 ## Community Group
 
@@ -86,3 +92,7 @@ Scan the QR code to join the community group for updates, usage discussion, and 
 <p align="center">
   <img src="https://img.laosunwendao.com/skill-uploads/30cea60a79ae4c0f920c4fa0e8180ee2.jpg" alt="Community group QR code" width="176" />
 </p>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

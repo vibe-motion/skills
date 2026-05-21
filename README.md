@@ -75,22 +75,28 @@ npx skills add vibe-motion/skills
 
 <img src="wechat-2d-render/assets/wechat-2d-demo.gif" alt="wechat 2d chat motion effect" width="390" />
 
-## Star History
+## 杂项
 
-[![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
+### 鱼群模拟
+
+基于 Three.js 的 boids 鱼群模拟项目。这个不是 skill，只作为独立项目展示。
+
+项目地址：[vibe-motion/threejs-boids](https://github.com/vibe-motion/threejs-boids)
+
+<img src="https://raw.githubusercontent.com/vibe-motion/threejs-boids/%E4%BA%A4%E4%BA%92%E9%B1%BC%E7%BC%B8/demo.gif" alt="threejs boids fish school simulation" width="540" />
 
 ## 交流
 
-### 交流群
-
-wechat群已满，后续可加入tg群交流: t.me/zjucat
+- wechat群已满，后续可加入tg群交流: t.me/zjucat
 <p align="center">
   <img src="https://img.laosunwendao.com/skill-uploads/c6e7b3f9a1e74c129866a6846a2246ee.jpg" alt="TG 交流群二维码" width="176" />
 </p>
 
-### 科技/科普自媒体收徒（有偿）
-
-联系方式如下，备注：非诚勿扰。
+- 科技/科普自媒体收徒（有偿，非诚勿扰）
 <p align="center">
   <img src="https://img.laosunwendao.com/skill-uploads/49bbd79ea9554357a2b9a9e839748dcc.jpg" alt="科技/科普自媒体收徒联系方式二维码" width="176" />
 </p>
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)

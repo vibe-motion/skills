@@ -87,10 +87,12 @@ Project: [vibe-motion/threejs-boids](https://github.com/vibe-motion/threejs-boid
 
 ## Community Group
 
-Scan the QR code to join the community group for updates, usage discussion, and feedback.
+The WeChat group has reached 200 members and can no longer be joined via QR code. Please add my WeChat and I'll manually invite you to the group.
+
+TG group: t.me/zjucat
 
 <p align="center">
-  <img src="https://img.laosunwendao.com/skill-uploads/30cea60a79ae4c0f920c4fa0e8180ee2.jpg" alt="Community group QR code" width="176" />
+  <img src="https://img.laosunwendao.com/skill-uploads/49bbd79ea9554357a2b9a9e839748dcc.jpg" alt="WeChat QR code" width="176" />
 </p>
 
 ## Star History

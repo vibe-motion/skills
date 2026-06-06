@@ -87,14 +87,10 @@ npx skills add vibe-motion/skills
 
 ## 交流
 
-- wechat群已满，后续可加入tg群交流: t.me/zjucat
+- 微信交流群已满 200 人，无法通过二维码入群，请添加我的微信，我手动拉你进群
+- TG 群：t.me/zjucat
 <p align="center">
-  <img src="https://img.laosunwendao.com/skill-uploads/c6e7b3f9a1e74c129866a6846a2246ee.jpg" alt="TG 交流群二维码" width="176" />
-</p>
-
-- 科技/科普自媒体收徒（有偿，非诚勿扰）
-<p align="center">
-  <img src="https://img.laosunwendao.com/skill-uploads/49bbd79ea9554357a2b9a9e839748dcc.jpg" alt="科技/科普自媒体收徒联系方式二维码" width="176" />
+  <img src="https://img.laosunwendao.com/skill-uploads/49bbd79ea9554357a2b9a9e839748dcc.jpg" alt="微信二维码" width="176" />
 </p>
 
 ## Star History

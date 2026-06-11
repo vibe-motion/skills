@@ -75,6 +75,10 @@ npx skills add vibe-motion/skills
 
 <img src="wechat-2d-render/assets/wechat-2d-demo.gif" alt="wechat 2d chat motion effect" width="390" />
 
+### disney-animation-rule-skill
+
+将迪士尼动画12原则应用于程序化动画的设计与工程实践。适用于创建、改进、审查或调试代码驱动的动画（Web、SVG、Canvas、React、Remotion、游戏、UI、角色、摄像机、3D 场景等），尤其当动画感觉僵硬、轻飘、机械、不清晰或物理正确但视觉表现力不足时。
+
 ## 杂项
 
 ### 鱼群模拟

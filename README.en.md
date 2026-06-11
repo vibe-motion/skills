@@ -75,6 +75,10 @@ Clones or updates `sxhzju/wechat-2d` and renders the default WeChat-style 2D cha
 
 <img src="wechat-2d-render/assets/wechat-2d-demo.gif" alt="wechat 2d chat motion effect" width="390" />
 
+### disney-animation-rule-skill
+
+Applies Disney's 12 animation principles as practical design and engineering rules for procedural animation. Use when creating, improving, reviewing, or debugging code-driven motion in web, SVG, canvas, React, Remotion, game, UI, character, camera, or 3D scenes — especially when motion feels stiff, weightless, mechanical, unclear, or physically correct but visually weak.
+
 ## Misc
 
 ### Fish School Simulation

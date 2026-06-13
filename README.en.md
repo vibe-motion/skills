@@ -45,6 +45,12 @@ Delivers a strong "power + speed" assembly look from static vectors.
   </tr>
 </table>
 
+### pixel2motion
+
+Turns PNG/JPG/WebP/screenshot logos into clean, low-complexity, motion-ready SVG, then generates branded logo motion, interactive HTML demos, GIF/video previews, and motion QA evidence. Useful for logo animation, SVG logo reveal, brand motion delivery, and pixel-to-vector-to-motion workflows.
+
+<img src="pixel2motion/assets/demo.gif" alt="pixel2motion logo animation effect" width="540" />
+
 ### light-spotlight-render
 
 Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.

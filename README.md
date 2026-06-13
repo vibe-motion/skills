@@ -45,6 +45,12 @@ npx skills add vibe-motion/skills
   </tr>
 </table>
 
+### pixel2motion
+
+将 PNG/JPG/WebP/截图里的 logo 转成平滑、低复杂度、可动效化的 SVG，再生成品牌 logo motion、交互式 HTML 展示、GIF/视频预览和运动 QA 证据。适用于 logo animation、SVG logo reveal、品牌动效交付和像素图到矢量动效的工作流。
+
+<img src="pixel2motion/assets/demo.gif" alt="pixel2motion logo animation effect" width="540" />
+
 ### light-spotlight-render
 
 生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。

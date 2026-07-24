@@ -1,0 +1,44 @@
+{
+  "fps": 30,
+  "durationSeconds": 15,
+  "allowCustomDuration": false,
+  "maxOverlapFrames": 12,
+  "shots": [
+    {
+      "id": "brand-hook",
+      "startFrame": 0,
+      "endFrame": 42,
+      "visualOwner": "official logo"
+    },
+    {
+      "id": "product-input",
+      "startFrame": 36,
+      "endFrame": 108,
+      "visualOwner": "product interaction"
+    },
+    {
+      "id": "execution",
+      "startFrame": 102,
+      "endFrame": 210,
+      "visualOwner": "capability flow"
+    },
+    {
+      "id": "results",
+      "startFrame": 198,
+      "endFrame": 342,
+      "visualOwner": "verified outputs"
+    },
+    {
+      "id": "hero-claim",
+      "startFrame": 330,
+      "endFrame": 405,
+      "visualOwner": "product hero"
+    },
+    {
+      "id": "final-lockup",
+      "startFrame": 393,
+      "endFrame": 450,
+      "visualOwner": "official logo and CTA"
+    }
+  ]
+}

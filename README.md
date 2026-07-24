@@ -51,6 +51,28 @@ npx skills add vibe-motion/skills
 
 <img src="pixel2motion/assets/demo.gif" alt="pixel2motion logo animation effect" width="540" />
 
+### brand-launch-video-star
+
+从公司官网、官方品牌资料或用户上传的产品图出发，制作 15–30 秒、快节奏、强视觉、丝滑的品牌与产品宣传视频。Skill 会先核验 logo、字体、颜色、图片与产品信息，再设计叙事、逐帧时间线和真实产品演示；默认英文、16:9、15 秒，也支持用户自定义时长和画幅。
+
+适合 AI/SaaS 发布片、官网动效视频、消费品牌广告、实体产品宣传、服务与公司理念片。重点不是套模板，而是用真实素材突出产品特性、使用场景、交互过程和结果。
+
+安装后可直接这样使用：
+
+```text
+使用 $brand-launch-video-star，基于 https://example.com 制作一条 15 秒、
+16:9、全英文的产品发布片。使用官网真实 logo 和素材，展示核心功能，
+整体快节奏、视觉冲击强、转场丝滑。
+```
+
+**Burger King — Flame Shift**
+
+<img src="brand-launch-video-star/assets/burger-king-flame-shift.gif" alt="Burger King fast-paced brand launch video" width="540" />
+
+**Moonshot AI — Product Hypercut**
+
+<img src="brand-launch-video-star/assets/moonshot-product-hypercut.gif" alt="Moonshot AI product launch video" width="540" />
+
 ### light-spotlight-render
 
 生成摆动聚光灯扫过文字的 reveal 动画 HTML，可配置文本、摆幅、灯罩缩放、辉光和背景颜色。

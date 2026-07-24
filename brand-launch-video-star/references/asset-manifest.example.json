@@ -1,0 +1,28 @@
+{
+  "project": "Example Product Launch",
+  "accessedAt": "2026-07-24",
+  "assets": [
+    {
+      "id": "brand-logo-primary",
+      "role": "logo",
+      "localPath": "public/brand/logo-primary.svg",
+      "sourceUrl": "https://company.example/media/logo-primary.svg",
+      "sourceType": "official-media-kit",
+      "verifiedAgainst": "https://company.example/",
+      "rightsNote": "Official media asset; confirm publication rights.",
+      "authenticity": "verified",
+      "checksum": ""
+    },
+    {
+      "id": "product-hero",
+      "role": "product",
+      "localPath": "public/brand/product-hero.png",
+      "sourceUrl": "user-provided://product-hero.png",
+      "sourceType": "user-provided-original",
+      "verifiedAgainst": "User-provided source file",
+      "rightsNote": "User supplied; publication rights remain with the user.",
+      "authenticity": "verified",
+      "checksum": ""
+    }
+  ]
+}

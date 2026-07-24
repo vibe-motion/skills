@@ -51,6 +51,26 @@ Turns PNG/JPG/WebP/screenshot logos into clean, low-complexity, motion-ready SVG
 
 <img src="pixel2motion/assets/demo.gif" alt="pixel2motion logo animation effect" width="540" />
 
+### brand-launch-video-star
+
+Creates fast, high-impact 15–30 second brand and product marketing films from an official company website, verified brand sources, or user-uploaded product imagery. It verifies logos, fonts, colors, imagery, and product claims before designing the story, frame timeline, and real product demonstration. Defaults to English, 16:9, and 15 seconds, with custom durations and formats supported.
+
+Useful for AI/SaaS launches, website motion films, consumer campaigns, physical products, services, and company concept films.
+
+```text
+Use $brand-launch-video-star to create a 15-second 16:9 English launch film
+for https://example.com. Use authentic official assets, demonstrate the core
+product workflow, and keep the pacing fast, visually bold, and smooth.
+```
+
+**Burger King — Flame Shift**
+
+<img src="brand-launch-video-star/assets/burger-king-flame-shift.gif" alt="Burger King fast-paced brand launch video" width="540" />
+
+**Moonshot AI — Product Hypercut**
+
+<img src="brand-launch-video-star/assets/moonshot-product-hypercut.gif" alt="Moonshot AI product launch video" width="540" />
+
 ### light-spotlight-render
 
 Generates a swinging spotlight text-reveal HTML animation with configurable text, swing range, lamp scale, glow, and background color.

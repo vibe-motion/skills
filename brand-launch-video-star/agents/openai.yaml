@@ -1,0 +1,4 @@
+interface:
+  display_name: "Brand Launch Video Star"
+  short_description: "Authentic, high-impact product launch films"
+  default_prompt: "Use $brand-launch-video-star to turn this company website or product imagery into a fast, authentic 15-30 second marketing film."

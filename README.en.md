@@ -32,6 +32,56 @@ shows Prompt → Agent, an AI product grid, a glass dashboard, an exploded workf
 world, and a neon message path. Every shot keeps its source and Props for brand, copy, data, aspect
 ratio, and timing adaptations.
 
+#### Key advantages
+
+- **Understand before animating**: compile content into input state → action → system response →
+  visible result → handoff, so every movement performs an explanatory job.
+- **Continuous spatial storytelling**: keep important objects alive across shots and mutate their
+  state instead of resetting the whole screen like a slide deck.
+- **Fully editable**: copy, data, brand, timing, waveforms, paths, camera, and aspect ratio remain
+  controlled by React Props and the Remotion timeline.
+- **Shot-library first**: search by semantic intent before reusing, adapting, or creating a system.
+  Reuse component logic rather than inserting an old MP4.
+- **High-fidelity reconstruction**: measure phases, geometry anchors, topology, camera motion, and
+  rhythm peaks from authorized UI recordings, reference videos, or AE renders.
+- **Deterministic rendering**: each frame is derived from `frame + fps + props + seeded data`,
+  enabling local repairs, automation, and pixel comparisons.
+- **Evidence-backed QA**: verify semantics, causality, subtitle sync, safe areas, values and
+  waveforms, final holds, asset licensing, and privacy.
+
+#### How it works
+
+```text
+Script / SRT / product specification / principle / reference
+                              ↓
+        Semantic compilation: objects, actions, numbers, states
+                              ↓
+       Director storyboard + persistent objects + shot search
+                              ↓
+             Hook / complex mechanism / ending hero frames
+                              ↓
+        React + Remotion + SVG / Canvas / WebGL / Three.js
+                              ↓
+             Narration, captions, labels, and audio cues
+                              ↓
+        Representative frames + motion windows + contact sheet
+                              ↓
+             Final video + editable project + reusable shots
+```
+
+#### Compared with templates and text-to-video
+
+| Dimension | Template / text-to-video | Code Motion Explainer |
+| --- | --- | --- |
+| Understanding | Keyword matching or style imitation | Semantic states, actions, and causality |
+| Shot structure | Independent clip assembly | Persistent objects and spatial handoffs |
+| Editability | Limited downstream changes | Source, Props, data, and timeline stay editable |
+| Technical ideas | Intermediate steps are often skipped | Input, transformation, and output stay visible |
+| Reconstruction | Approximate visual similarity | Measured geometry, topology, phases, and rhythm |
+| Stability | Regeneration may change the result | Frame-deterministic rendering |
+| Reuse | Repeat a finished template | Accumulate parameterized components and evidence |
+| Delivery | Usually a video | Video, project, parameters, shots, and QA evidence |
+
 ```text
 Use $remotion-code-motion-explainer to turn this product explanation into a continuous 16:9
 code-motion video. Make every action produce a visible result, preserve editable parameters,

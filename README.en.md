@@ -25,6 +25,13 @@ and frame-level visual QA.
 
 Capability example: [220V AC to 15V DC explainer](remotion-code-motion-explainer/assets/showcase/ac-to-dc-explainer.mp4)
 
+[![Editable shot library preview](remotion-code-motion-explainer/assets/showcase/code-motion-shot-library-preview.gif)](remotion-code-motion-explainer/assets/showcase/code-motion-shot-library-preview.mp4)
+
+The bundled library contains 63 searchable entries and 65 Remotion compositions. The motion wall
+shows Prompt → Agent, an AI product grid, a glass dashboard, an exploded workflow, an SRT knowledge
+world, and a neon message path. Every shot keeps its source and Props for brand, copy, data, aspect
+ratio, and timing adaptations.
+
 ```text
 Use $remotion-code-motion-explainer to turn this product explanation into a continuous 16:9
 code-motion video. Make every action produce a visible result, preserve editable parameters,

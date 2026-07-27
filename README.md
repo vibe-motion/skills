@@ -23,6 +23,12 @@ Remotion 代码动画。它擅长产品发布、AI 工作流、UI 交互、算�
 
 能力示例：[220V 交流电转 15V 直流电原理动画](remotion-code-motion-explainer/assets/showcase/ac-to-dc-explainer.mp4)
 
+[![可编辑镜头库动态预览](remotion-code-motion-explainer/assets/showcase/code-motion-shot-library-preview.gif)](remotion-code-motion-explainer/assets/showcase/code-motion-shot-library-preview.mp4)
+
+内置镜头库包含 63 个可检索条目和 65 个 Remotion compositions。上方镜头墙展示
+Prompt → Agent、AI 产品网格、玻璃仪表盘、工作流爆炸图、SRT 知识世界和霓虹路径。
+这些镜头保留源码与 Props，可按品牌、文字、数据、画幅和时间重新组合。
+
 ```text
 使用 $remotion-code-motion-explainer，把这段产品说明做成 16:9 的连续代码动画。
 要求每个操作都有可见结果，保留可编辑参数，并输出联系表和 QC 证据。

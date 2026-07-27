@@ -12,6 +12,22 @@ npx skills add vibe-motion/skills
 
 ## 可用技能
 
+### remotion-code-motion-explainer
+
+把脚本、旁白、字幕、产品流程、技术原理或参考视频转化为连续、可编辑、可参数化的
+Remotion 代码动画。它擅长产品发布、AI 工作流、UI 交互、算法、科学原理、数据流、
+系统架构、图表、公式和电路等抽象内容，并内置语义拆镜、持续空间逻辑、镜头库检索、
+高保真参考复刻、音画绑定和逐帧 QC 工作流。
+
+[![代码动画能力预览](remotion-code-motion-explainer/assets/showcase/code-motion-promo.gif)](remotion-code-motion-explainer/assets/showcase/code-motion-promo-30s.mp4)
+
+能力示例：[220V 交流电转 15V 直流电原理动画](remotion-code-motion-explainer/assets/showcase/ac-to-dc-explainer.mp4)
+
+```text
+使用 $remotion-code-motion-explainer，把这段产品说明做成 16:9 的连续代码动画。
+要求每个操作都有可见结果，保留可编辑参数，并输出联系表和 QC 证据。
+```
+
 ### ruler-progress-render
 
 生成尺子进度动画。触发关键词：尺子进度动画；可配置文字和进度等参数。

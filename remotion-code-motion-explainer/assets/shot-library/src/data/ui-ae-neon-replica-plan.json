@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "reference": {
+    "path": "reference-not-redistributed.mp4",
+    "sha256": "db7fd4798c81ae3186d5a356f8ca54fcacee355c3fe3033e8d63cab5e32ddcec",
+    "width": 1080,
+    "height": 1920,
+    "fps": 60,
+    "sourceFrames": 1967
+  },
+  "conceptAngle": "思想像沿发光轨道被逐步组织的控制信号",
+  "rhythmSignature": "安静建立 → 圆环变形 → 胶囊扩展 → 节点组织 → 白场语义接力 → 光团聚合 → 品牌冻结",
+  "implementationLevel": "L3-high-fidelity-motion-system-reconstruction",
+  "windows": [
+    {
+      "id": "w01-path-orbit",
+      "frames": [0, 359],
+      "anchor": "vertical-path-to-orbit",
+      "atoms": ["svg-path-draw", "glow-plane-rise", "orbit-to-diamond", "star-collapse"]
+    },
+    {
+      "id": "w02-form-card",
+      "frames": [360, 509],
+      "anchor": "four-point-star",
+      "atoms": ["star-to-pill", "gradient-card-expand", "copy-reveal", "rightward-handoff"]
+    },
+    {
+      "id": "w03-focus-nodes",
+      "frames": [495, 879],
+      "anchor": "five-focus-nodes",
+      "atoms": ["node-stagger", "arc-draw", "stem-grow", "diagonal-reorder", "leader-collapse"]
+    },
+    {
+      "id": "w04-semantic-pills",
+      "frames": [870, 1349],
+      "anchor": "black-semantic-pill",
+      "atoms": ["white-field-flash", "pill-handoff", "wire-draw", "icon-morph", "blue-wipe"]
+    },
+    {
+      "id": "w05-connected-thought",
+      "frames": [1330, 1789],
+      "anchor": "connected-outline",
+      "atoms": ["outline-draw", "line-slice", "glow-word-reveal", "glow-cluster-resolution"]
+    },
+    {
+      "id": "w06-brand",
+      "frames": [1782, 1966],
+      "anchor": "youmotion-mark",
+      "atoms": ["mark-resolve", "domain-reveal", "frozen-hold"]
+    }
+  ],
+  "exactnessBoundary": "The MP4 supplies timing and visible pixels only. The original AEP, fonts, plugin settings, expressions and motion-blur configuration are unavailable, so pixel-perfect L4 is not claimed."
+}

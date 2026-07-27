@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Code Motion Shot Intent",
+  "type": "object",
+  "required": ["id", "sourceBeatId", "fromFrame", "durationInFrames", "visualRole", "composition"],
+  "properties": {
+    "id": {"type": "string"},
+    "sourceBeatId": {"type": "string"},
+    "fromFrame": {"type": "integer", "minimum": 0},
+    "durationInFrames": {"type": "integer", "minimum": 1},
+    "visualRole": {
+      "enum": ["a-roll", "b-roll-full", "b-roll-pip", "overlay", "transition", "chapter", "end-card"]
+    },
+    "composition": {"type": "string"},
+    "captionText": {"type": "string"},
+    "assetIds": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "motion": {
+      "type": "object",
+      "properties": {
+        "preset": {
+          "enum": ["snappy", "smooth", "elastic", "mask", "camera-continuity", "none"]
+        },
+        "entryFrames": {"type": "integer", "minimum": 0},
+        "exitFrames": {"type": "integer", "minimum": 0},
+        "staggerFrames": {"type": "integer", "minimum": 0},
+        "stiffness": {"type": "number", "minimum": 0},
+        "damping": {"type": "number", "minimum": 0},
+        "mass": {"type": "number", "exclusiveMinimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "audio": {
+      "type": "object",
+      "properties": {
+        "keepArollAudio": {"type": "boolean"},
+        "muteVisualAsset": {"type": "boolean"},
+        "bgmMood": {"type": "string"},
+        "sfxCue": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "safety": {
+      "type": "object",
+      "properties": {
+        "faceSafeSide": {"enum": ["left", "right", "both", "none"]},
+        "speakerSide": {"enum": ["left", "right", "both", "none"]},
+        "faceBoxes": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["x", "y", "width", "height"],
+            "properties": {
+              "x": {"type": "number", "minimum": 0},
+              "y": {"type": "number", "minimum": 0},
+              "width": {"type": "number", "exclusiveMinimum": 0},
+              "height": {"type": "number", "exclusiveMinimum": 0}
+            },
+            "additionalProperties": false
+          }
+        },
+        "reservedZones": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["x", "y", "width", "height"],
+            "properties": {
+              "x": {"type": "number", "minimum": 0},
+              "y": {"type": "number", "minimum": 0},
+              "width": {"type": "number", "exclusiveMinimum": 0},
+              "height": {"type": "number", "exclusiveMinimum": 0}
+            },
+            "additionalProperties": false
+          }
+        },
+        "mediaShape": {"enum": ["portrait", "square", "landscape"]},
+        "selectedSlot": {"enum": ["left", "right", "center-narrow", "center-lower"]},
+        "facePadding": {"type": "number", "minimum": 0},
+        "captionSafe": {"type": "boolean"},
+        "maxBrollSeconds": {"type": "number", "maximum": 3},
+        "avoidForeignFaces": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

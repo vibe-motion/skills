@@ -1,0 +1,5 @@
+interface:
+  display_name: "Code Motion Explainer"
+  short_description: "Create continuous, editable Remotion explainers with rigorous visual QA"
+  default_prompt: "Use $remotion-code-motion-explainer to turn this script, concept, product flow, or reference into a polished code-driven Remotion explainer."
+

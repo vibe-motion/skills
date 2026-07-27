@@ -12,6 +12,25 @@ npx skills add vibe-motion/skills
 
 ## Available Skills
 
+### remotion-code-motion-explainer
+
+Turn scripts, narration, subtitles, product flows, technical principles, or reference videos into
+continuous, editable, parameterized Remotion motion graphics. It is designed for product launches,
+AI workflows, UI interactions, algorithms, scientific principles, data flows, architecture,
+charts, equations, and electrical systems. The Skill includes semantic shot planning, persistent
+spatial logic, a searchable shot library, high-fidelity reconstruction guidance, audio binding,
+and frame-level visual QA.
+
+[![Code Motion capability preview](remotion-code-motion-explainer/assets/showcase/code-motion-promo.gif)](remotion-code-motion-explainer/assets/showcase/code-motion-promo-30s.mp4)
+
+Capability example: [220V AC to 15V DC explainer](remotion-code-motion-explainer/assets/showcase/ac-to-dc-explainer.mp4)
+
+```text
+Use $remotion-code-motion-explainer to turn this product explanation into a continuous 16:9
+code-motion video. Make every action produce a visible result, preserve editable parameters,
+and deliver a contact sheet with QC evidence.
+```
+
 ### ruler-progress-render
 
 Creates a ruler progress animation. Trigger keyword: 尺子进度动画; supports configurable parameters such as text and progress.

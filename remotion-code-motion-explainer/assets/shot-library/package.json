@@ -1,0 +1,28 @@
+{
+  "name": "code-motion-shot-library",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "remotion studio",
+    "render:previews": "python3 scripts/render_previews.py",
+    "validate:shots": "python3 scripts/validate_shots.py",
+    "test:bundle": "remotion compositions src/index.ts"
+  },
+  "dependencies": {
+    "@remotion/captions": "^4.0.489",
+    "@remotion/cli": "4.0.489",
+    "@remotion/effects": "^4.0.489",
+    "@remotion/media": "4.0.489",
+    "@remotion/motion-blur": "^4.0.489",
+    "@remotion/zod-types": "^4.0.489",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "remotion": "4.0.489",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "5.9.3"
+  }
+}

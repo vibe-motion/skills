@@ -101,6 +101,14 @@ Clones or updates `vibe-motion/threejs-earth` and renders a Three.js 3D Earth ro
 
 <img src="threejs-earth-render/assets/earth.gif" alt="threejs earth route animation" width="448" />
 
+### 3d-chladni-render
+
+Clones or updates `nolangz/3D-Chladni` and uses its deterministic exporter to create 3D Chladni particle MP4 or transparent ProRes MOV output. Supports Dynamic Sand, Modal Sand, Cosmic Web, Dynamic Cosmic, audio-driven motion, particle density, lighting, rotation, and reproducible seeds.
+
+<img src="3d-chladni-render/assets/3d-chladni-cosmic.gif" alt="3D Chladni cosmic particle motion" width="304" />
+
+<sub>Preview media: 3D Chladni media by Lykno, licensed under CC BY-NC 4.0.</sub>
+
 ### wechat-2d-render
 
 Clones or updates `sxhzju/wechat-2d` and renders the default WeChat-style 2D chat motion video. Useful for WeChat chat animation, video-message bubble motion, and transparent Remotion exports.

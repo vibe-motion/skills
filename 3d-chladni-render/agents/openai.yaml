@@ -1,0 +1,4 @@
+interface:
+  display_name: "3D Chladni Render"
+  short_description: "Render deterministic audio-reactive 3D Chladni motion"
+  default_prompt: "Use $3d-chladni-render to create a 6-second 16:9 Cosmic Web MP4, optionally driven by my audio file."

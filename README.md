@@ -103,6 +103,14 @@ npx skills add vibe-motion/skills
 
 <img src="threejs-earth-render/assets/earth.gif" alt="threejs earth route animation" width="448" />
 
+### 3d-chladni-render
+
+克隆或更新 `nolangz/3D-Chladni`，并通过项目自带的确定性导出器生成 3D 克拉尼粒子 MP4 或透明 ProRes MOV。支持动态声沙、模态声沙、宇宙网、动态宇宙网，以及音频驱动、粒子密度、灯光、旋转和可复现种子。
+
+<img src="3d-chladni-render/assets/3d-chladni-cosmic.gif" alt="3D Chladni cosmic particle motion" width="304" />
+
+<sub>预览素材：3D Chladni media by Lykno，采用 CC BY-NC 4.0 许可。</sub>
+
 ### wechat-2d-render
 
 克隆或更新 `sxhzju/wechat-2d`，并渲染默认微信聊天 2D 动效视频。适用于微信聊天动画、视频消息气泡动效和透明背景 Remotion 导出。

@@ -153,4 +153,4 @@ npx skills add vibe-motion/skills
 
 ## Star History
 
-[![Star History Chart](https://api.star-history.com/svg?repos=vibe-motion/skills&type=Date)](https://www.star-history.com/#vibe-motion/skills&Date)
+[![Star History Chart](https://star-history.dera.page/svg?repos=vibe-motion/skills&type=Date)](https://star-history.dera.page/#vibe-motion/skills&Date)

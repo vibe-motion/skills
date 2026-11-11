@@ -15,6 +15,12 @@ npx skills add vibe-motion/skills
 
 ## Available Skills
 
+### perspective-illusion
+
+Creates looping illustrated 3D videos in the Japanese perspective-illusion style: dolly zooms and camera swings open a flat telephoto scene into deep perspective. Works with streets, crossings, stations, shop aisles, rooms, parks, rooftops, and more.
+
+<img src="perspective-illusion/assets/demo.gif" alt="perspective-illusion effect" width="540" />
+
 ### ruler-progress-render
 
 Creates a ruler progress animation. Trigger keyword: 尺子进度动画; supports configurable parameters such as text and progress.

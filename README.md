@@ -12,6 +12,12 @@ npx skills add vibe-motion/skills
 
 ## 可用技能
 
+### perspective-illusion
+
+制作日式透视错觉风格的循环插画 3D 视频：长焦平面场景通过推拉变焦和环绕运镜展开纵深，适用于街道、路口、车站、商店、房间、公园或屋顶等场景。
+
+<img src="perspective-illusion/assets/demo.gif" alt="perspective-illusion effect" width="540" />
+
 ### ruler-progress-render
 
 生成尺子进度动画。触发关键词：尺子进度动画；可配置文字和进度等参数。

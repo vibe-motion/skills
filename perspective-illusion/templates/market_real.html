@@ -1,0 +1,318 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>supermarket real</title>
+<style>
+  html, body { margin: 0; background: #ECEBE6; }
+  #frame { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  canvas#gl { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+</style>
+<div id="frame"><canvas id="gl" width="2880" height="1620"></canvas></div>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { RoomEnvironment } from "three/addons/environments/RoomEnvironment.js";
+import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
+import { RenderPass } from "three/addons/postprocessing/RenderPass.js";
+import { GTAOPass } from "three/addons/postprocessing/GTAOPass.js";
+import { UnrealBloomPass } from "three/addons/postprocessing/UnrealBloomPass.js";
+import { OutputPass } from "three/addons/postprocessing/OutputPass.js";
+
+// Rendered at 1.5x and shown at 1920: thin edges (product rows, grout) stay steady instead of shimmering
+const PW = 2880, PH = 1620, ASPECT = 16 / 9;
+const R = new THREE.WebGLRenderer({ canvas: document.getElementById("gl"), antialias: true, preserveDrawingBuffer: true });
+R.setPixelRatio(1); R.setSize(PW, PH, false); R.outputColorSpace = THREE.SRGBColorSpace; R.toneMapping = THREE.NeutralToneMapping; R.toneMappingExposure = .82;
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFSoftShadowMap;
+const scene = new THREE.Scene(); scene.background = new THREE.Color("#ECEBE6");
+scene.environment = new THREE.PMREMGenerator(R).fromScene(new RoomEnvironment(), .04).texture; scene.environmentIntensity = .55;
+
+// ---------- kit ----------
+const rnd = (() => { let s = 21; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+const pick = (a) => a[Math.floor(rnd() * a.length)];
+const cache = {};
+const mat = (color, o = {}) => { const k = color + JSON.stringify(Object.keys(o).map((k) => [k, o[k]?.uuid || o[k]])); return cache[k] ||= new THREE.MeshStandardMaterial({ color, roughness: .6, envMapIntensity: .45, ...o }); };
+const GLOSS = (c) => mat(c, { roughness: .15, envMapIntensity: .9 }), METAL = (c = "#cfd2d8") => mat(c, { roughness: .3, metalness: .85, envMapIntensity: 1 }), FAB = (c) => mat(c, { roughness: .95 });
+let G = scene;
+const put = (m, x, y, z, ry = 0) => { m.position.set(x, y, z); m.rotation.y = ry; m.castShadow = m.receiveShadow = true; G.add(m); return m; };
+const box = (w, h, d, m, x, y, z, ry = 0) => put(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m), x, y, z, ry);
+const rb = (w, h, d, r, m, x, y, z, ry = 0) => put(new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3, d / 2 - 1e-3)), m), x, y, z, ry);
+const cyl = (rt, rbt, h, m, x, y, z, seg = 24) => put(new THREE.Mesh(new THREE.CylinderGeometry(rt, rbt, h, seg), m), x, y, z);
+const sph = (r, m, x, y, z, sx = 1, sy = 1, sz = 1) => { const o = put(new THREE.Mesh(new THREE.SphereGeometry(r, 24, 16), m), x, y, z); o.scale.set(sx, sy, sz); return o; };
+const group = (fn, x, y, z, ry = 0) => { const g = new THREE.Group(), p = G; G = g; fn(); G = p; g.position.set(x, y, z); g.rotation.y = ry; g.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; }); G.add(g); return g; };
+function canvasTex(w, h, paint, rep) { const c = document.createElement("canvas"); c.width = w; c.height = h; paint(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; if (rep) { t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); } return t; }
+const JP = '"Hiragino Sans", "Hiragino Kaku Gothic ProN", sans-serif';
+const txt = (g, s, x, y, size, color, weight = 800, align = "center") => { g.font = `${weight} ${size}px ${JP}`; g.fillStyle = color; g.textAlign = align; g.textBaseline = "middle"; g.fillText(s, x, y); };
+
+// ---------- product labels (printed in code: real Japanese text, crisp) ----------
+const BRAND = { drink: ["緑茶", "麦茶", "ほうじ茶", "サイダー", "天然水", "コーヒー", "オレンジ", "スポーツ"], can: ["ツナ", "コーン", "トマト", "みかん", "さば", "ビール", "コーラ"],
+  box: ["コーンフレーク", "クッキー", "チョコ", "カレー", "シチュー", "ビスケット", "グラノーラ"], bag: ["ポテト", "せんべい", "えびせん", "ポップコーン", "あられ", "スナック"],
+  cup: ["ラーメン", "うどん", "そば", "焼きそば", "みそ汁"], bottle: ["醤油", "みりん", "ソース", "酢", "ドレッシング"] };
+const BG = ["#D8322A", "#F2C230", "#1F8A4C", "#2B55B8", "#F4F3EE", "#F07E26", "#7A4FB0", "#1C2A55", "#E85A8A", "#2FA9C9", "#8B5A2B", "#111"];
+const ink = (bg) => { const c = new THREE.Color(bg); return c.r * .3 + c.g * .59 + c.b * .11 > .55 ? "#1b1b1b" : "#ffffff"; };
+function label(kind, i) {   // returns a texture for one product design
+  const bg = BG[(i * 5 + kind.length) % BG.length], fg = ink(bg), word = BRAND[kind][i % BRAND[kind].length];
+  return canvasTex(512, 512, (g, w, h) => {
+    g.fillStyle = bg; g.fillRect(0, 0, w, h);
+    const acc = BG[(i * 3 + 4) % BG.length]; g.fillStyle = acc; g.globalAlpha = .9;
+    if (i % 3 === 0) { g.beginPath(); g.arc(w * .5, h * .62, w * .22, 0, 7); g.fill(); }
+    else if (i % 3 === 1) { g.fillRect(0, h * .7, w, h * .12); }
+    else { g.beginPath(); g.moveTo(0, h); g.lineTo(w, h * .55); g.lineTo(w, h); g.fill(); }
+    g.globalAlpha = 1;
+    const size = word.length > 5 ? 64 : word.length > 3 ? 84 : 112;
+    if (kind === "drink" || kind === "can" || kind === "bottle") { txt(g, word, w * .5, h * .42, size, fg); txt(g, ["500ml", "350ml", "1L", "2L"][i % 4], w * .5, h * .58, 34, fg, 600); }
+    else { txt(g, word, w * .5, h * .25, size, fg); txt(g, ["新発売", "徳用", "まろやか", "濃厚", "うす塩"][i % 5], w * .5, h * .4, 38, fg, 700); }
+    g.strokeStyle = fg; g.globalAlpha = .35; g.lineWidth = 6; g.strokeRect(14, 14, w - 28, h - 28); g.globalAlpha = 1;
+  });
+}
+// product geometry, centred on the shelf, front facing +z
+const GEO = {
+  drink: new THREE.LatheGeometry([[0, 0], [.034, 0], [.036, .01], [.036, .16], [.026, .2], [.014, .225], [.014, .245], [0, .245]].map(([a, b]) => new THREE.Vector2(a, b)), 28),
+  can: new THREE.CylinderGeometry(.033, .033, .12, 28),
+  box: new THREE.BoxGeometry(.19, .27, .07),
+  bag: new RoundedBoxGeometry(.2, .27, .09, 3, .035),
+  cup: new THREE.CylinderGeometry(.052, .04, .11, 28),
+  bottle: new THREE.LatheGeometry([[0, 0], [.04, 0], [.042, .01], [.042, .17], [.03, .22], [.016, .25], [.016, .28], [0, .28]].map(([a, b]) => new THREE.Vector2(a, b)), 28),
+};
+const SIZE = { drink: [.08, .245], can: [.07, .12], box: [.2, .27], bag: [.21, .27], cup: [.11, .11], bottle: [.09, .28] };
+const LBL = {}; for (const k in BRAND) LBL[k] = Array.from({ length: 8 }, (_, i) => label(k, i));
+const productMat = (k, i) => cache["p" + k + i] ||= new THREE.MeshStandardMaterial({ map: LBL[k][i], roughness: k === "drink" || k === "bottle" ? .2 : k === "bag" ? .35 : .5, metalness: k === "can" ? .35 : 0, envMapIntensity: .7 });
+
+// a shelf run: blocks of identical products (real merchandising), a price-tag rail with printed tags
+function shelfRun(len, face, kinds) {
+  let z = -len / 2 + .05; const items = [];
+  while (z < len / 2 - .2) { const k = pick(kinds), v = Math.floor(rnd() * 8), facings = 3 + Math.floor(rnd() * 5), [w, h] = SIZE[k];
+    const n = Math.min(facings, Math.floor((len / 2 - .05 - z) / (w + .006))); if (n < 1) break;
+    items.push({ k, v, n, w, h, z0: z }); z += n * (w + .006) + .03; }
+  return items;
+}
+function placeProducts(items, x, y, face) {
+  for (const it of items) {
+    const im = new THREE.InstancedMesh(GEO[it.k], productMat(it.k, it.v), it.n * 2), m4 = new THREE.Matrix4(), q = new THREE.Quaternion().setFromEuler(new THREE.Euler(0, face * Math.PI / 2, 0));
+    let c = 0; for (let i = 0; i < it.n; i++) for (let r = 0; r < 2; r++) {   // two deep
+      const yy = it.k === "can" || it.k === "cup" || it.k === "box" || it.k === "bag" ? y + it.h / 2 : y;
+      m4.compose(new THREE.Vector3(x + face * (.12 - r * .11), yy, it.z0 + it.w / 2 + i * (it.w + .006)), q, new THREE.Vector3(1, 1, 1)); im.setMatrixAt(c++, m4); }
+    im.castShadow = im.receiveShadow = true; G.add(im);
+  }
+}
+function priceRail(len, face, x, y, z0) {
+  const t = canvasTex(2048, 64, (g, w, h) => { g.fillStyle = "#F4F3EE"; g.fillRect(0, 0, w, h);
+    for (let k = 0; k < 14; k++) { const px = 40 + k * 146; g.fillStyle = k % 4 === 0 ? "#F2C230" : "#ffffff"; g.fillRect(px, 6, 118, 52); g.strokeStyle = "#999"; g.lineWidth = 2; g.strokeRect(px, 6, 118, 52);
+      txt(g, pick(["¥98", "¥128", "¥158", "¥198", "¥248", "¥298", "¥88"]), px + 59, 26, 30, k % 4 === 0 ? "#D8322A" : "#1b1b1b"); txt(g, "税込", px + 59, 50, 14, "#555", 600); } });
+  const m = new THREE.Mesh(new THREE.PlaneGeometry(len, .055), new THREE.MeshStandardMaterial({ map: t, roughness: .5 }));
+  m.position.set(x, y, z0); m.rotation.y = face * Math.PI / 2; G.add(m);
+}
+
+// ---------- the store (same layout as the illusion rig expects) ----------
+const END = -34, ROADW = 6.4;
+// glossy vinyl floor tiles, pieces meeting edge to edge
+const floorT = canvasTex(1024, 1024, (g, w, h) => { const n = 8; for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const k = new THREE.Color((i + j) % 2 ? "#E6E3DA" : "#D9D5CA").offsetHSL(0, 0, (rnd() - .5) * .015); g.fillStyle = "#" + k.getHexString(); g.fillRect(i * w / n, j * h / n, w / n, h / n); }
+  g.strokeStyle = "rgba(0,0,0,.12)"; g.lineWidth = 2; for (let k = 0; k <= n; k++) { g.beginPath(); g.moveTo(k * w / n, 0); g.lineTo(k * w / n, h); g.stroke(); g.beginPath(); g.moveTo(0, k * h / n); g.lineTo(w, k * h / n); g.stroke(); } }, [20, 18]);
+const floorM = new THREE.MeshStandardMaterial({ map: floorT, roughness: .22, envMapIntensity: .8 });
+const fl = new THREE.Mesh(new THREE.PlaneGeometry(80, 70), floorM); fl.rotation.x = -Math.PI / 2; fl.position.set(0, 0, -9); fl.receiveShadow = true; scene.add(fl);
+box(80, .004, .1, mat("#F2C230"), 0, .002, 3.05); box(80, .004, .1, mat("#F2C230"), 0, .002, -3.05);
+for (let k = 0; k < 7; k++) box(4.6, .004, .42, mat("#F4F3EE", { roughness: .4 }), -.2, .003, 2.4 - k * .82);   // floor markings in the cross aisle
+// ceiling: grid tiles with recessed light panels (glowing), cable trays, sprinklers
+const ceilT = canvasTex(512, 512, (g, w, h) => { g.fillStyle = "#EFEEE8"; g.fillRect(0, 0, w, h); g.strokeStyle = "#C8C7C0"; g.lineWidth = 4; for (let k = 0; k <= w; k += 128) { g.beginPath(); g.moveTo(k, 0); g.lineTo(k, h); g.stroke(); g.beginPath(); g.moveTo(0, k); g.lineTo(w, k); g.stroke(); } }, [40, 35]);
+const ce = new THREE.Mesh(new THREE.PlaneGeometry(80, 70), new THREE.MeshStandardMaterial({ map: ceilT, roughness: .9 })); ce.rotation.x = Math.PI / 2; ce.position.set(0, 6.6, -9); scene.add(ce);
+const panelM = new THREE.MeshStandardMaterial({ color: "#ffffff", emissive: "#ffffff", emissiveIntensity: 1.3 });
+for (const x of [-2.2, 0, 2.2, -6, 6]) for (let z = 5; z > END; z -= 2.4) { const p = new THREE.Mesh(new THREE.PlaneGeometry(.55, 1.15), panelM); p.rotation.x = Math.PI / 2; p.position.set(x, 6.595, z); scene.add(p); }
+for (let z = 4; z > END; z -= 4.8) for (const x of [-1.1, 1.1]) cyl(.025, .025, .06, METAL(), x, 6.57, z, 10);
+
+// back wall: department signs, a fresh-food chiller run, a deli counter
+group(() => {
+  box(40, 6.6, .3, mat("#E8E5DC", { roughness: .85 }), 0, 3.3, -.15);
+  const ban = canvasTex(2048, 256, (g, W, H) => { g.fillStyle = "#1F8A4C"; g.fillRect(0, 0, W, H); txt(g, "毎日安い！  新鮮・おいしい  ほっとマート", W / 2, H / 2, 120, "#fff"); g.fillStyle = "#F2C230"; g.fillRect(0, H - 24, W, 24); });
+  const bn = new THREE.Mesh(new THREE.PlaneGeometry(18, 2.25), new THREE.MeshStandardMaterial({ map: ban, roughness: .5 })); bn.position.set(-4.6, 5.35, .02); G.add(bn);   // store banner high on the back wall
+  const dept = [["鮮魚", "#2B55B8"], ["精肉", "#D8322A"], ["惣菜", "#F07E26"], ["青果", "#1F8A4C"], ["日配", "#2FA9C9"]];
+  dept.forEach(([w, c], i) => { const t = canvasTex(512, 160, (g, W, H) => { g.fillStyle = c; g.fillRect(0, 0, W, H); txt(g, w, W / 2, H / 2, 104, "#fff"); });
+    const s = new THREE.Mesh(new THREE.PlaneGeometry(2.4, .75), new THREE.MeshStandardMaterial({ map: t, roughness: .5, emissive: "#ffffff", emissiveMap: t, emissiveIntensity: .25 })); s.position.set(-9.6 + i * 4.8, 3.75, .02); G.add(s); });
+  // open chillers: dark interior, glowing top strip, packed trays
+  for (let k = -7; k <= 7; k++) { const x = k * 1.32;
+    box(1.3, 2.0, .9, mat("#E9EEF2", { roughness: .4 }), x, 1.0, .45); box(1.2, 1.5, .02, mat("#22324F"), x, 1.15, .6);
+    box(1.2, .05, .2, mat("#ffffff", { emissive: "#ffffff", emissiveIntensity: 1.5 }), x, 1.95, .8);
+    for (let s = 0; s < 4; s++) for (let c = 0; c < 6; c++) { const k2 = pick(["can", "cup", "drink"]); const it = new THREE.Mesh(GEO[k2], productMat(k2, Math.floor(rnd() * 8))); it.position.set(x - .5 + c * .2, .55 + s * .38, .72); G.add(it); }
+    box(1.3, .3, .9, mat("#B9BCC3", { roughness: .4 }), x, .15, .45); }
+}, 4.6, 0, END);
+
+// gondolas down both sides of the main aisle (aisle-facing side fully stocked), with header signs and price rails
+function gondola(x, z0, z1, face, cat) {
+  const len = z0 - z1, cz = (z0 + z1) / 2;
+  group(() => {
+    box(.12, 1.95, len, mat("#D4D6DD", { roughness: .5 }), -face * .27, .98, 0);              // back panel, behind the shelves
+    box(.5, .04, len, mat("#BFC3CC", { roughness: .4 }), face * .02, 1.97, 0);                // top cap
+    for (let s = 0; s < 5; s++) { const y = .16 + s * .38;
+      box(.48, .025, len, METAL("#E3E5EA"), face * .04, y, 0);
+      placeProducts(shelfRun(len, face, s > 3 ? ["bag", "box"] : s > 1 ? cat : ["drink", "bottle", "can"]), face * .04, y + .013, face);
+      priceRail(len, face, face * .285, y - .01, 0); }
+    box(.5, .12, len, mat("#6d7184"), face * .04, .06, 0);
+    // category header board on top, facing the aisle
+    const t = canvasTex(1024, 128, (g, W, H) => { g.fillStyle = "#1F8A4C"; g.fillRect(0, 0, W, H); txt(g, cat === ["cup"] ? "" : catName(cat), W / 2, H / 2, 74, "#fff"); });
+    const hb = new THREE.Mesh(new THREE.PlaneGeometry(Math.min(len, 6), .38), new THREE.MeshStandardMaterial({ map: t, roughness: .5 })); hb.position.set(face * .05, 2.2, 0); hb.rotation.y = face * Math.PI / 2; G.add(hb);
+  }, x, 0, cz);
+}
+const catName = (c) => c.includes("cup") ? "インスタント食品" : c.includes("box") ? "お菓子・シリアル" : c.includes("bottle") ? "調味料" : "飲料";
+const CATS = [["cup", "box"], ["bag", "box"], ["bottle", "can"], ["drink", "can"], ["box", "bag"], ["cup", "bottle"]];
+let ci = 0;
+for (const [z0, z1] of [[-3.4, -14], [-15.4, -24], [-25.4, END + 1]]) { gondola(-ROADW / 2 - .3, z0, z1, 1, CATS[ci++ % 6]); gondola(ROADW / 2 + .3, z0, z1, -1, CATS[ci++ % 6]); }
+for (const [z0, z1] of [[-3.4, -14], [-15.4, -24], [-25.4, END + 1]]) { box(1.0, 1.95, z0 - z1, mat("#D4D6DD"), -ROADW / 2 - 2.8, .98, (z0 + z1) / 2); box(1.0, 1.95, z0 - z1, mat("#D4D6DD"), ROADW / 2 + 2.8, .98, (z0 + z1) / 2); }
+box(.3, 6.6, 60, mat("#E8E5DC"), -11, 3.3, -10); box(.3, 6.6, 60, mat("#E8E5DC"), 11, 3.3, -10);
+
+// end caps facing the camera: stacked product towers, a POP card, a price board
+function endcap(x, z, k) { group(() => {
+  box(1.7, .45, .85, mat("#B98A55", { roughness: .7 }), 0, .225, 0);
+  for (let r = 0; r < 6; r++) for (let c = 0; c < 6 - Math.floor(r / 2); c++) { const it = new THREE.Mesh(GEO[k], productMat(k, (r + c) % 8)); it.position.set(-.55 + c * .2 + (r % 2) * .05, .45 + (k === "drink" || k === "bottle" ? 0 : SIZE[k][1] / 2) + r * SIZE[k][1] * 1.02, .1 + (c % 2) * .05); it.castShadow = it.receiveShadow = true; G.add(it); }
+  const t = canvasTex(512, 256, (g, W, H) => { g.fillStyle = "#F2C230"; g.fillRect(0, 0, W, H); g.fillStyle = "#D8322A"; g.fillRect(0, 0, W, 70); txt(g, "特売!", W / 2, 37, 54, "#fff"); txt(g, pick(["¥98", "¥128", "¥198"]), W / 2, 150, 110, "#D8322A"); txt(g, "本日のおすすめ", W / 2, 225, 34, "#1b1b1b", 700); });
+  const pop = new THREE.Mesh(new THREE.PlaneGeometry(.7, .35), new THREE.MeshStandardMaterial({ map: t, roughness: .5 })); pop.position.set(0, 2.05, .3); G.add(pop);
+  cyl(.012, .012, 1.0, METAL(), 0, 1.4, .28, 8);
+}, x, 0, z); }
+endcap(-ROADW / 2 - .55, -2.9, "can"); endcap(ROADW / 2 + .55, -2.9, "box"); endcap(-ROADW / 2 - 2.8, -2.9, "cup"); endcap(ROADW / 2 + 2.8, -2.9, "bag");
+
+// columns with hanging aisle signs (number + category), lined up so the telephoto stacks them
+function column(x, z, n) {
+  box(.42, 6.6, .42, mat("#E1DFD8", { roughness: .7 }), x, 3.3, z); box(.46, .12, .46, mat("#9EA3B3"), x, .06, z);
+  const t = canvasTex(512, 220, (g, W, H) => { g.fillStyle = "#1F8A4C"; g.fillRect(0, 0, W, H); g.fillStyle = "#fff"; g.fillRect(16, 16, 170, H - 32); txt(g, String(n), 101, H / 2, 130, "#1F8A4C");
+    txt(g, pick(["飲料", "お菓子", "調味料", "麺類", "日用品"]), 350, H / 2 - 22, 58, "#fff"); txt(g, "AISLE", 350, H / 2 + 46, 30, "#BFE8CF", 700); });
+  const s = new THREE.Mesh(new THREE.BoxGeometry(1.25, .54, .04), [mat("#14713C"), mat("#14713C"), mat("#14713C"), mat("#14713C"), new THREE.MeshStandardMaterial({ map: t, roughness: .5 }), new THREE.MeshStandardMaterial({ map: t, roughness: .5 })]);
+  s.position.set(x, 3.6, z); s.castShadow = true; G.add(s); cyl(.008, .008, 2.7, METAL(), x - .5, 5.2, z, 6); cyl(.008, .008, 2.7, METAL(), x + .5, 5.2, z, 6);
+  return [x, 4.5, z];
+}
+let an = 1; for (const z of [3.3, -6.8, -14.6, -22.4, -30.2]) { column(-ROADW / 2 - .55, z, an); column(ROADW / 2 + .55, z, an + 1); an += 2; }
+
+// red baskets (the cones of this scene): real plastic, slotted sides, handles
+const basketM = mat("#D52B26", { roughness: .4 });
+function basket(x, z, s = 1) { const g = group(() => {
+  box(.5, .02, .34, basketM, 0, .01, 0);
+  for (const [w, d, px, pz] of [[.5, .012, 0, .17], [.5, .012, 0, -.17], [.012, .34, .25, 0], [.012, .34, -.25, 0]]) for (let r = 0; r < 6; r++) box(w, .026, d, basketM, px, .035 + r * .045, pz);
+  for (const [px, pz] of [[.25, .17], [-.25, .17], [.25, -.17], [-.25, -.17]]) box(.016, .29, .016, basketM, px, .145, pz);
+  const h = new THREE.Mesh(new THREE.TorusGeometry(.17, .01, 8, 24, Math.PI), mat("#2b2b2b", { roughness: .4 })); h.position.set(0, .29, 0); h.castShadow = true; G.add(h);
+}, x, 0, z); g.scale.setScalar(s); return g; }
+const CONES = []; for (let k = 0; k < 5; k++) CONES.push(basket(-2.6 + k * 1.36, 5.75, 1.9));
+const coneZ = (k, lay) => 5.75 + (2.6 - k * .95 - 5.75) * lay;
+
+// checkouts behind the camera's start: counters, registers, lane lights
+for (let k = -3; k <= 3; k++) if (k) group(() => { box(.7, .9, 2.4, mat("#F4F3EE", { roughness: .4 }), 0, .45, 0); box(.72, .04, 2.42, mat("#9EA3B3", { roughness: .3 }), 0, .92, 0);
+  rb(.34, .3, .3, .03, mat("#2a2b35", { roughness: .4 }), 0, 1.1, -.6); box(.3, .2, .02, GLOSS("#1C2A55"), 0, 1.2, -.44);
+  cyl(.02, .02, 1.3, METAL(), .3, 1.55, .9, 8); const t = canvasTex(128, 128, (g, W, H) => { g.fillStyle = "#1F8A4C"; g.beginPath(); g.arc(64, 64, 60, 0, 7); g.fill(); txt(g, String(Math.abs(k)), 64, 66, 72, "#fff"); });
+  const lt = new THREE.Mesh(new THREE.CircleGeometry(.16, 32), new THREE.MeshStandardMaterial({ map: t, emissive: "#ffffff", emissiveMap: t, emissiveIntensity: .6 })); lt.position.set(.3, 2.3, .92); G.add(lt); }, k * 2.6 + Math.sign(k) * 1.6, 0, 9.5);
+
+// ---------- people (built from shapes: believable at a glance, not photoreal) ----------
+const SKIN = ["#F1C9A5", "#E0AC84", "#C68863", "#F5D6BA"], HAIR = ["#1b1612", "#2b2119", "#4a3527", "#8a8a8a", "#1b1612"];
+function person(x, z, ry, o = {}) { return group(() => {
+  const skin = mat(pick(SKIN), { roughness: .7 }), hair = mat(o.hair || pick(HAIR), { roughness: .8 }), top = FAB(o.top || pick(["#F4F3EE", "#2B3A55", "#8C2F39", "#5B6B4E", "#C9B79C", "#3D5A80"])),
+        pants = FAB(o.pants || pick(["#2a2b35", "#39445C", "#7A6A58", "#1b1b1b"])), shoe = mat("#242424", { roughness: .5 });
+  const H = o.h || 1.0, step = o.walk ? .14 : .04;
+  // legs, slightly apart, one forward if walking
+  for (const sd of [-1, 1]) { const lg = put(new THREE.Mesh(new THREE.CapsuleGeometry(.065 * H, .7 * H, 6, 12), pants), sd * .085, .44 * H, sd * step * .5); lg.rotation.x = sd * step * .5;
+    rb(.11, .07, .25, .03, shoe, sd * .085, .035, sd * step + .04); }
+  if (o.skirt) cyl(.13, .24, .45 * H, FAB(o.skirt), 0, .7 * H, 0, 24);
+  // torso and shoulders
+  rb(.38 * H, .58 * H, .22 * H, .1 * H, top, 0, 1.12 * H, 0);
+  if (o.apron) { rb(.36 * H, .62 * H, .02, .02, FAB(o.apron), 0, 1.0 * H, .12 * H); }
+  // arms: one may hold a basket
+  for (const sd of [-1, 1]) { const holding = o.basket && sd === 1;
+    const ar = put(new THREE.Mesh(new THREE.CapsuleGeometry(.05 * H, .5 * H, 6, 12), top), sd * .23 * H, 1.1 * H, holding ? .06 : 0); ar.rotation.z = sd * .08; ar.rotation.x = holding ? -.25 : 0;
+    sph(.05 * H, skin, sd * .25 * H, .78 * H, holding ? .14 : 0); }
+  if (o.basket) { const b = new THREE.Group(); const prev = G; G = b; const bm = basketM;
+    box(.42, .2, .28, bm, 0, 0, 0); for (let k = 0; k < 3; k++) { const it = new THREE.Mesh(GEO[pick(["drink", "can", "box"])], productMat(pick(["drink", "can", "box"]), Math.floor(rnd() * 8))); it.position.set(-.12 + k * .12, .05, 0); b.add(it); }
+    G = prev; b.position.set(.3 * H, .62 * H, .16); b.rotation.y = .3; b.traverse((m) => { if (m.isMesh) m.castShadow = true; }); G.add(b); }
+  // neck, head, hair (a cap of hair, plus a ponytail or bob)
+  cyl(.045 * H, .05 * H, .1 * H, skin, 0, 1.46 * H, 0, 12);
+  sph(.105 * H, skin, 0, 1.6 * H, .01, .95, 1.1, 1);
+  sph(.112 * H, hair, 0, 1.64 * H, -.015, 1, 1.02, 1.02);
+  if (o.long) rb(.22 * H, .3 * H, .1 * H, .05, hair, 0, 1.48 * H, -.08);
+  if (o.cap) { cyl(.11 * H, .115 * H, .06 * H, FAB(o.cap), 0, 1.72 * H, 0, 20); rb(.16 * H, .015, .1 * H, .005, FAB(o.cap), 0, 1.69 * H, .1 * H); }
+}, x, 0, z, ry); }
+// shoppers in the aisle and by the end caps, a cashier at a till, a stock clerk
+person(-1.3, -8.5, .3, { walk: true, basket: true, top: "#8C2F39", long: true });
+person(1.6, -12, -2.6, { top: "#F4F3EE", pants: "#39445C" });
+person(-2.1, -18.5, 1.4, { basket: true, top: "#3D5A80", skirt: "#C9B79C", long: true });
+person(.6, -24, Math.PI, { walk: true, top: "#5B6B4E" });
+person(2.2, -29, -1.6, { h: .92, top: "#C9B79C", hair: "#8a8a8a" });
+person(-4.6, -1.9, .5, { top: "#2B3A55", basket: true });
+person(4.7, -1.8, -.4, { top: "#F07E26", h: .82, long: true });
+person(-6.6, 8.9, Math.PI, { top: "#1F8A4C", apron: "#1F8A4C", cap: "#1F8A4C" });
+person(-4.6, -16.2, Math.PI / 2, { top: "#1F8A4C", apron: "#F4F3EE", cap: "#1F8A4C" });
+
+// a shopping cart and a promo stand
+function cart(x, z, ry) { group(() => { const W = METAL("#C9CCD6");
+  for (let r = 0; r < 5; r++) { box(.55, .012, .012, W, 0, .55 + r * .1, .45); box(.55, .012, .012, W, 0, .55 + r * .1, -.45); box(.012, .012, .9, W, .27, .55 + r * .1, 0); box(.012, .012, .9, W, -.27, .55 + r * .1, 0); }
+  for (let k = 0; k < 10; k++) box(.012, .4, .012, W, -.27 + k * .06, .75, .45);
+  box(.6, .035, .035, mat("#D8322A"), 0, 1.05, -.55); for (const [px, pz] of [[.22, .35], [-.22, .35], [.22, -.35], [-.22, -.35]]) { box(.02, .5, .02, W, px, .3, pz); const w = cyl(.055, .055, .035, mat("#1b1b1b"), px, .055, pz, 16); w.rotation.z = Math.PI / 2; } }, x, 0, z, ry); }
+cart(-5.9, -1.4, 0); cart(-11, -1.2, Math.PI / 2);
+
+// ---------- light: store panels (soft, from above), plus a key for crisp contact shadows ----------
+const amb = new THREE.HemisphereLight("#ffffff", "#c9c4b6", .55); scene.add(amb);
+const sun = new THREE.DirectionalLight("#fffaf0", 1.25); sun.position.set(-3, 22, 14); sun.target.position.set(0, 0, -8); scene.add(sun, sun.target);
+sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -26, right: 26, top: 30, bottom: -30, near: 1, far: 80 }); sun.shadow.bias = -.0004; sun.shadow.normalBias = .04;
+const wp = new THREE.Vector3(); scene.updateMatrixWorld(true);
+scene.traverse((o) => { if (!o.isMesh) return; o.getWorldPosition(wp); if (wp.y > 6.2) o.castShadow = false;
+  if (o.geometry.type === "BoxGeometry") { o.geometry.computeBoundingBox(); const b = o.geometry.boundingBox; if (b.max.y - b.min.y > 4) o.castShadow = false; } });
+
+// ---------- cameras: keyframes, blended as dolly zooms ----------
+// a shot = what it looks at (target), from which direction (yaw/pitch, deg), through what lens (fov), framing how wide (W, metres at the target)
+// The reference never tilts or turns its camera: it always faces straight down the street, level, so verticals stay
+// vertical. "Looking down" or "up" is done with lens shift (moving the horizon in the frame), like a tilt-shift lens.
+// Each shot below was solved from the reference frames' vanishing points, kerb lines and object sizes.
+// x: sideways position, y: camera height (m), zf: focus plane, W: width framed at the focus plane, fov: horizontal,
+// H: where the horizon sits (-1 bottom of frame, 0 centre, 1 top), lay: cone layout (0 kerb row, 1 diagonal)
+const SHOTS = {
+  flat:  { x: .15, y: 4.05, zf: -16, W: 14.4, fov: 2, H: 0, lay: 0, cs: 1.9 },     // telephoto: the whole street squashed flat
+  worm:  { x: .36, y: .65, zf: 3.3, W: 16.7, fov: 90, H: -.72, lay: 0, cs: 1.55 },  // knee height, horizon pushed low
+  high:  { x: 0, y: 7.5, zf: 3.3, W: 12.0, fov: 35, H: 1.73, lay: 0, cs: 1.55 },    // up high on a long lens, horizon above the frame
+  diag:  { x: .3, y: 4.7, zf: 3.3, W: 10.4, fov: 80, H: .69, lay: 1, cs: 1.55 },    // re-solved with the crossing width as the ruler
+  diag2: { x: .1, y: 2.6, zf: 3.3, W: 7.9, fov: 80, H: .5, lay: 1, cs: 1.55 },
+  low:   { x: .2, y: 2.9, zf: 3.3, W: 10.74, fov: 75, H: .14, lay: 1, cs: 1.55 },
+};
+const drift = (s, o) => ({ ...s, ...Object.fromEntries(Object.entries(o).map(([k, v]) => [k, k === "W" ? s.W * v : s[k] + v])) });
+Object.assign(SHOTS, { flat2: drift(SHOTS.flat, { W: .965 }), flatD: drift(SHOTS.flat, { W: .985, lay: 1 }), flat2D: drift(SHOTS.flat, { W: .965, lay: 1 }),
+  worm2: drift(SHOTS.worm, { x: .25, W: .95 }), high2: drift(SHOTS.high, { x: -.3, W: .95 }), diag1b: drift(SHOTS.diag, { x: .1, W: .94 }),
+  diag2b: drift(SHOTS.diag2, { x: .1, W: .93 }), low2: drift(SHOTS.low, { x: -.2, W: .95 }) });
+// timeline matched to the reference. The cone swap (lay 0 <-> 1) happens inside flat holds, where it can't be seen.
+const KEYS = [[0, "flat2"], [420, "flat"], [800, "worm"], [1300, "worm2"], [1600, "high"], [2300, "high2"], [2620, "flat"], [3000, "flatD"], [3380, "flat2D"],
+              [3700, "diag"], [4400, "diag1b"], [4650, "diag2"], [5350, "diag2b"], [5650, "low"], [6450, "low2"], [6820, "flat2D"], [6930, "flat2"], [7000, "flat2"]];
+const LOOP = 7000;
+const NAMES = KEYS.map((k) => k[1]), TIMES = KEYS.map((k) => k[0]);
+const PARAMS = (sh) => [sh.x, sh.y, sh.zf, Math.log(sh.W), Math.log(sh.fov), sh.H, sh.lay, sh.cs];
+const VALS = NAMES.map((n) => PARAMS(SHOTS[n]));
+// Fritsch-Carlson slopes per parameter: velocity is continuous through every key, and holds (equal keys) stay flat
+const SLOPES = VALS[0].map((_, j) => { const n = TIMES.length, d = [], m = new Array(n).fill(0);
+  for (let i = 0; i < n - 1; i++) d.push((VALS[i + 1][j] - VALS[i][j]) / (TIMES[i + 1] - TIMES[i]));
+  m[0] = d[0]; m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) { if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; } const a_ = m[i] / d[i], b_ = m[i + 1] / d[i], h = a_ * a_ + b_ * b_; if (h > 9) { const t_ = 3 / Math.sqrt(h); m[i] = t_ * a_ * d[i]; m[i + 1] = t_ * b_ * d[i]; } }
+  m[0] = m[n - 1] = 0; return m; });   // ends flat so the loop joins seamlessly
+const cam = new THREE.PerspectiveCamera(30, ASPECT, .1, 4000);
+function shotAt(ms) {
+  let k = 0; while (k < TIMES.length - 2 && ms >= TIMES[k + 1]) k++;
+  const h = TIMES[k + 1] - TIMES[k], u = Math.min(1, Math.max(0, (ms - TIMES[k]) / h));
+  const h00 = 2 * u ** 3 - 3 * u ** 2 + 1, h10 = u ** 3 - 2 * u ** 2 + u, h01 = -2 * u ** 3 + 3 * u ** 2, h11 = u ** 3 - u ** 2;
+  const v = VALS[k].map((a_, j) => h00 * a_ + h10 * h * SLOPES[j][k] + h01 * VALS[k + 1][j] + h11 * h * SLOPES[j][k + 1]);
+  return { x: v[0], y: v[1], zf: v[2], W: Math.exp(v[3]), fov: Math.exp(v[4]), H: v[5], lay: Math.min(1, Math.max(0, v[6])), cs: v[7] };
+}
+function place(s) {
+  const hf = THREE.MathUtils.degToRad(s.fov), camZ = s.zf + (s.W / 2) / Math.tan(hf / 2);   // dolly zoom: W stays framed at zf
+  cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(hf / 2) / ASPECT));
+  cam.position.set(s.x, s.y, camZ); cam.lookAt(s.x, s.y, camZ - 1);                          // always level, always down the street
+  cam.near = Math.max(.05, Math.min(1, (camZ - 8) * .5)); cam.far = camZ - END + 60; cam.updateProjectionMatrix();
+  cam.projectionMatrix.elements[9] = -s.H;                                                   // lens shift: puts the horizon at H
+  cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+  CONES.forEach((c, k) => { c.position.z = coneZ(k, s.lay); c.scale.setScalar(s.cs); });   // drawn bigger in the flat view, like the reference
+}
+
+
+
+// ---------- render: AO for contact darkening, a soft glow on the light panels ----------
+const comp = new EffectComposer(R, new THREE.WebGLRenderTarget(PW, PH, { type: THREE.HalfFloatType, samples: 4 }));
+comp.setSize(PW, PH); comp.addPass(new RenderPass(scene, cam));
+const ao = new GTAOPass(scene, cam, PW, PH); ao.updateGtaoMaterial({ radius: .45, distanceExponent: 1.4, thickness: 1.5, scale: 1, samples: 16 }); ao.blendIntensity = .8; comp.addPass(ao);
+comp.addPass(new UnrealBloomPass(new THREE.Vector2(PW / 2, PH / 2), .12, .4, .97));
+comp.addPass(new OutputPass());
+// probe: where a grid of aisle points lands on screen (1920 px wide) at time ms, used by the renderer to size motion blur
+const PROBE = []; for (const x of [-12, -6, 0, 6, 12]) for (const y of [0, 3, 6]) for (const z of [2, -8, -20, -34]) PROBE.push(new THREE.Vector3(x, y, z));
+window.probe = (ms) => { ms = ((ms % LOOP) + LOOP) % LOOP; place(shotAt(ms)); cam.updateMatrixWorld();
+  return PROBE.map((v) => { const q = v.clone().project(cam); return [q.x * 960, q.y * 540, q.z]; }); };
+window.render = (ms) => { ms = ((ms % LOOP) + LOOP) % LOOP; place(shotAt(ms)); comp.render(); };
+window.render(0);
+window.READY = document.fonts.ready;
+</script>

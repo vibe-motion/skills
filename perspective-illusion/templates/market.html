@@ -1,0 +1,299 @@
+<!doctype html>
+<meta charset="utf-8">
+<title>supermarket</title>
+<style>
+  html, body { margin: 0; background: #E8451E; }
+  #frame { position: relative; width: 1920px; height: 1080px; overflow: hidden; }
+  canvas#gl { position: absolute; inset: 0; width: 1920px; height: 1080px; }
+</style>
+<div id="frame"><canvas id="gl" width="1920" height="1080"></canvas></div>
+<script type="importmap">{ "imports": { "three": "./node_modules/three/build/three.module.js", "three/addons/": "./node_modules/three/examples/jsm/" } }</script>
+<script type="module">
+import * as THREE from "three";
+import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
+import { OutlineEffect } from "three/addons/effects/OutlineEffect.js";
+import { LineSegments2 } from "three/addons/lines/LineSegments2.js";
+import { LineSegmentsGeometry } from "three/addons/lines/LineSegmentsGeometry.js";
+import { LineMaterial } from "three/addons/lines/LineMaterial.js";
+
+const PW = 1920, PH = 1080, ASPECT = 16 / 9;   // native size: 1px manga linework stays crisp
+const R = new THREE.WebGLRenderer({ canvas: document.getElementById("gl"), antialias: true, preserveDrawingBuffer: true });
+R.setPixelRatio(1); R.setSize(PW, PH, false); R.outputColorSpace = THREE.SRGBColorSpace; R.toneMapping = THREE.NoToneMapping;
+R.shadowMap.enabled = true; R.shadowMap.type = THREE.PCFShadowMap;   // hard-edged cast shadows, like the reference
+const scene = new THREE.Scene();
+// burning sunset sky (screen-space backdrop)
+{ const c = document.createElement("canvas"); c.width = 16; c.height = 512; const g = c.getContext("2d"); const gr = g.createLinearGradient(0, 0, 0, 512);
+  gr.addColorStop(0, "#DA3704"); gr.addColorStop(1, "#DA3704");   // a flat graphic sky g.fillStyle = gr; g.fillRect(0, 0, 16, 512);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; scene.background = t; }
+
+// ---------- kit ----------
+// cel shading: two flat tones per surface with a hard terminator (the reference's illustration look)
+const ramp = new THREE.DataTexture(new Uint8Array([112, 112, 128, 255, 255, 255, 255, 255]), 2, 1, THREE.RGBAFormat);   // shadow tone a touch blue, like the reference
+ramp.minFilter = ramp.magFilter = THREE.NearestFilter; ramp.needsUpdate = true;
+const cache = {};
+const mat = (color, o = {}) => { const { roughness, metalness, envMapIntensity, emissive, emissiveIntensity, ...rest } = o;
+  const k = color + JSON.stringify(Object.keys(rest).map((k) => [k, rest[k]?.uuid || rest[k]])) + (emissive || "");
+  return cache[k] ||= new THREE.MeshToonMaterial({ color, gradientMap: ramp, ...(emissive ? { emissive, emissiveIntensity } : {}), ...rest }); };
+const GLOSS = (c) => mat(c), METAL = (c = "#c9cbd3") => mat(c);
+const rnd = (() => { let s = 11; return () => (s = (s * 16807) % 2147483647) / 2147483647; })();
+function tex(w, h, paint, rep = [1, 1]) { const c = document.createElement("canvas"); c.width = w; c.height = h; paint(c.getContext("2d"), w, h);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 16; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(...rep); return t; }
+let G = scene;
+const put = (m, x, y, z, rx = 0, ry = 0, rz = 0) => { m.position.set(x, y, z); m.rotation.set(rx, ry, rz); m.castShadow = m.receiveShadow = true; G.add(m); return m; };
+const rb = (w, h, d, r, m, x, y, z, ry = 0) => put(new THREE.Mesh(new RoundedBoxGeometry(w, h, d, 3, Math.min(r, w / 2 - 1e-3, h / 2 - 1e-3, d / 2 - 1e-3)), m), x, y, z, 0, ry);
+const box = (w, h, d, m, x, y, z, ry = 0) => put(new THREE.Mesh(new THREE.BoxGeometry(w, h, d), m), x, y, z, 0, ry);
+const cyl = (rt, rbm, h, m, x, y, z, seg = 32) => put(new THREE.Mesh(new THREE.CylinderGeometry(rt, rbm, h, seg), m), x, y, z);
+const tube = (pts, r, m, seg = 64) => put(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(pts.map((p) => new THREE.Vector3(...p))), seg, r, 8), m), 0, 0, 0);
+const lathe = (pts, m, x, y, z) => put(new THREE.Mesh(new THREE.LatheGeometry(pts.map(([a, b]) => new THREE.Vector2(a, b)), 48), m), x, y, z);
+const group = (fn, x, y, z, ry = 0) => { const g = new THREE.Group(), p = G; G = g; fn(); G = p; g.position.set(x, y, z); g.rotation.y = ry; g.traverse((o) => { if (o.isMesh) o.castShadow = o.receiveShadow = true; }); G.add(g); return g; };
+
+// palette measured from the reference frames (k-means over four frames)
+const C = { wall: "#83849A", wall2: "#7A7B92", wall3: "#727284", trim: "#B9BCC3", glass: "#1A2235", road: "#515963", walk: "#B9BCC3", cone: "#E33807", car: "#334AB3", pole: "#9A9BAE", green: "#125532", ink: "#050407" };
+
+// ---------- a Japanese supermarket, built on the same trick ----------
+// The main aisle runs away from the camera along -z to the back wall (deli counter, fridges, big price boards).
+// Near the camera a cross aisle runs along x (in front of the checkouts). Through the telephoto the long shelves are
+// seen edge-on and vanish: only the end-cap displays facing the camera, the hanging aisle signs (all lined up into one
+// per side) and the back wall remain, a flat poster of a shop. The lens opens and the whole aisle appears.
+const END = -34, ROADW = 6.4, WALK = 2.6;
+const M = { floor: "#D9D6CB", floor2: "#CBC7BA", ceil: "#EEEDE6", wall: "#E4E1D6", shelf: "#C9CCD6", shelf2: "#9EA3B3", red: "#D8322A", yel: "#F2C230", grn: "#1F8A4C", blu: "#2B55B8", navy: "#1C2A55", wood: "#B98A55", white: "#F4F3EE", basket: "#D52B26" };
+const T_ = (map) => new THREE.MeshToonMaterial({ map, gradientMap: ramp });
+function plane(w, d, m, x, y, z, rx = -Math.PI / 2) { const o = new THREE.Mesh(new THREE.PlaneGeometry(w, d), m); o.rotation.x = rx; o.position.set(x, y, z); o.receiveShadow = true; o.userData.noLines = true; scene.add(o); return o; }
+scene.background = new THREE.Color(M.ceil);
+
+// floor: big vinyl tiles with an ink grid; a yellow safety line; the cross aisle in a slightly darker tile
+const tileT = (base, n, rep) => T_(tex(512, 512, (g, w, h) => { for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) { const k = new THREE.Color(base).offsetHSL(0, 0, ((i + j) % 2 ? -.025 : .015) + (rnd() - .5) * .01); g.fillStyle = "#" + k.getHexString(); g.fillRect(i * w / n, j * h / n, w / n, h / n); }
+  g.strokeStyle = "#9b998f"; g.lineWidth = 2; /* soft grout: dark grid lines shimmer into moire near the horizon */ for (let k = 0; k <= n; k++) { g.beginPath(); g.moveTo(k * w / n, 0); g.lineTo(k * w / n, h); g.stroke(); g.beginPath(); g.moveTo(0, k * h / n); g.lineTo(w, k * h / n); g.stroke(); } }, rep));
+plane(80, 47, tileT(M.floor, 8, [20, 12]), 0, 0, -26.5);   // behind the cross aisle
+plane(80, 23, tileT(M.floor, 8, [20, 6]), 0, 0, 14.5);       // in front of it
+plane(80, 6, tileT(M.floor2, 8, [20, 1.5]), 0, 0, 0);         // the cross aisle itself: abutting, never overlapping
+box(80, .012, .12, mat(M.yel), 0, .006, 3.05); box(80, .012, .12, mat(M.yel), 0, .006, -3.05);
+// floor arrows in the cross aisle (where the zebra crossing was): bold painted bars
+for (let k = 0; k < 7; k++) box(4.6, .012, .42, mat("#F4F3EE"), -.2, .008, 2.4 - k * .82);
+
+// ceiling + light rows (the "wires": long fluorescent troughs that fan out in the wide shots)
+plane(80, 70, mat(M.ceil), 0, 7.8, -9, Math.PI / 2);
+for (const x of [-2.2, 0, 2.2]) for (let z = 5; z > END; z -= 3.2) { box(.32, .1, 2.6, mat("#fbfbf6", { emissive: "#ffffff", emissiveIntensity: .5 }), x, 7.7, z); box(.42, .06, 2.7, mat("#B9BCC3"), x, 7.77, z); }
+for (const x of [-4.6, 4.6]) { box(.12, .08, 60, mat("#8f93a3"), x, 7.5, -10); }            // cable trays running down each side
+
+// back wall: deli counter, a long fridge run, big price boards (shapes, no text)
+group(() => {
+  box(40, 7.8, .3, mat(M.wall), 0, 3.9, -.15);
+  box(40, 1.1, .2, mat(M.grn), 0, 5.2, .1);                                                   // green fascia band
+  for (let k = -3; k <= 3; k++) { rb(2.6, .8, .12, .05, mat(k % 2 ? M.yel : M.red), k * 3.2, 4.0, .2); box(1.6, .22, .02, mat(M.white), k * 3.2, 4.05, .27); }   // price boards
+  for (let k = -6; k <= 6; k++) { box(1.25, 1.9, .9, mat("#E9EEF2"), k * 1.3, 1.25, .45); box(1.1, 1.3, .02, mat("#1C2A55"), k * 1.3, 1.45, .91);   // fridges with glass doors
+    for (let r = 0; r < 3; r++) for (let c = 0; c < 4; c++) box(.18, .24, .05, mat([M.red, M.yel, M.grn, M.blu, M.white][(r * 4 + c + k + 20) % 5]), k * 1.3 - .4 + c * .27, .98 + r * .42, .9);
+    box(.03, 1.3, .03, mat("#B9BCC3"), k * 1.3, 1.45, .93); }
+  box(40, .3, 1.1, mat("#B9BCC3"), 0, .15, .55);
+}, 4.6, 0, END);
+
+// gondola shelving down both sides of the main aisle: uprights, five shelves, packed products, price-tag strips
+const prodGeo = new THREE.BoxGeometry(1, 1, 1);
+const PCOL = [M.red, M.yel, M.grn, M.blu, M.white, "#F07E26", "#7A4FB0", "#E8E1C8", M.navy];
+function gondola(x, z0, z1, face) {    // face: +1 faces +x, -1 faces -x
+  const len = z0 - z1, cz = (z0 + z1) / 2;
+  group(() => {
+    box(.9, 2.1, len, mat(M.shelf2), -face * .45, 1.05, 0);                                     // back panel block
+    for (let s = 0; s < 5; s++) { const y = .18 + s * .42;
+      box(.55, .04, len, mat(M.shelf), face * .05, y, 0);
+      box(.02, .07, len, mat([M.yel, M.white][s % 2]), face * .33, y + .01, 0);                  // price-tag strip
+      // products: an instanced mesh per shelf, random sizes and colours (packets, boxes, bottles)
+      const n = Math.floor(len / .17), im = new THREE.InstancedMesh(prodGeo, new THREE.MeshToonMaterial({ gradientMap: ramp }), n);
+      const m4 = new THREE.Matrix4(), col = new THREE.Color();
+      for (let i = 0; i < n; i++) { const h = .18 + rnd() * .17, w = .12 + rnd() * .04;
+        m4.compose(new THREE.Vector3(face * .08, y + .02 + h / 2, -len / 2 + .1 + i * (len - .2) / n), new THREE.Quaternion(), new THREE.Vector3(.36, h, w)); im.setMatrixAt(i, m4);
+        im.setColorAt(i, col.set(PCOL[Math.floor(rnd() * PCOL.length)])); }
+      im.castShadow = im.receiveShadow = true; G.add(im); }
+    box(.6, .14, len, mat("#6d7184"), face * .02, .07, 0);                                        // kick plate
+  }, x, 0, cz);
+}
+for (const [z0, z1] of [[-3.4, -14], [-15.4, -24], [-25.4, END + 1]]) { gondola(-ROADW / 2 - .35, z0, z1, 1); gondola(ROADW / 2 + .35, z0, z1, -1); }
+// a second row of gondolas behind, and side walls, so no gaps show
+for (const [z0, z1] of [[-3.4, -14], [-15.4, -24], [-25.4, END + 1]]) { gondola(-ROADW / 2 - 2.6, z0, z1, -1); gondola(ROADW / 2 + 2.6, z0, z1, 1); }
+box(.3, 7.8, 60, mat(M.wall), -14, 3.9, -10); box(.3, 7.8, 60, mat(M.wall), 14, 3.9, -10);
+
+// end caps facing the camera at the head of each gondola: pyramid displays (what the flat view sees)
+function endcap(x, z, colA, colB) { group(() => {
+  box(1.8, .5, .9, mat(M.wood), 0, .25, 0);
+  let k = 0; for (let r = 0; r < 5; r++) for (let c = 0; c < 6 - r; c++) { const cy = cyl(.11, .11, .26, mat(k++ % 2 ? colA : colB), -.6 + r * .12 + c * .24, .63 + r * .27, .1, 20); }
+  rb(1.7, .55, .05, .03, mat(M.yel), 0, 2.35, .3); box(1.1, .16, .02, mat(M.red), 0, 2.38, .34);       // POP header card
+  box(.04, 1.7, .04, mat("#8f93a3"), -.8, 1.4, .3); box(.04, 1.7, .04, mat("#8f93a3"), .8, 1.4, .3);
+}, x, 0, z); }
+endcap(-ROADW / 2 - .55, -2.9, M.red, M.white); endcap(ROADW / 2 + .55, -2.9, M.yel, M.grn);
+endcap(-ROADW / 2 - 2.8, -2.9, M.blu, M.white); endcap(ROADW / 2 + 2.8, -2.9, M.red, M.yel);
+
+// "poles": square columns down each side with a hanging aisle sign each; through the telephoto they stack into one per side
+function column(x, z, hasSign) {
+  box(.42, 7.8, .42, mat("#D7D5CC"), x, 3.9, z); box(.46, .18, .46, mat("#9EA3B3"), x, .09, z);
+  if (hasSign) { cyl(.012, .012, .9, mat("#6d7184"), x - .3, 5.7, z, 6); cyl(.012, .012, .9, mat("#6d7184"), x + .3, 5.7, z, 6);
+    rb(1.3, .62, .08, .04, mat(M.grn), x, 4.95, z); rb(.5, .44, .09, .03, mat(M.white), x - .32, 4.95, z); box(.5, .1, .1, mat(M.yel), x + .25, 4.95, z); }   // aisle number board (shapes, no text)
+  return [x, 5.9, z];
+}
+const PL = [], PR = [];
+for (const z of [3.3, -6.8, -14.6, -22.4, -30.2]) { PL.push(column(-ROADW / 2 - .55, z, true)); PR.push(column(ROADW / 2 + .55, z, true)); }
+// a big hanging banner and a ceiling speaker on the near columns (like the street sign box and the signal)
+group(() => { box(1.2, .06, .06, mat("#6d7184"), .6, 0, 0); rb(1.8, .55, .1, .05, mat(M.red), 1.7, 0, 0); box(1.4, .28, .02, mat(M.white), 1.7, 0, .06); }, -ROADW / 2 - .55, 5.3, 3.3);
+group(() => { box(1.0, .06, .06, mat("#6d7184"), -.5, 0, 0); rb(.42, .42, .3, .2, mat("#ECECE6"), -1.1, -.1, 0); }, ROADW / 2 + .55, 5.6, 3.3);
+
+// the five red baskets: a row by the checkout in some shots, a diagonal across the floor arrows in others
+function basket(x, z, s = 1) { const g = group(() => {
+  const B = mat(M.basket);
+  box(.5, .03, .34, B, 0, .02, 0);
+  for (const [w, d, px, pz] of [[.5, .03, 0, .17], [.5, .03, 0, -.17], [.03, .34, .25, 0], [.03, .34, -.25, 0]]) for (let r = 0; r < 4; r++) box(w, .045, d, B, px, .06 + r * .075, pz);
+  for (const [px, pz] of [[.25, .17], [-.25, .17], [.25, -.17], [-.25, -.17]]) box(.03, .3, .03, B, px, .15, pz);
+  const hnd = new THREE.Mesh(new THREE.TorusGeometry(.19, .012, 8, 24, Math.PI), mat("#1b1b22")); hnd.position.set(0, .3, 0); G.add(hnd);
+}, x, .002, z); g.scale.setScalar(s); return g; }
+const CONES = []; for (let k = 0; k < 5; k++) CONES.push(basket(-2.6 + k * 1.36, 5.75, 1.9));
+const coneZ = (k, lay) => 5.75 + (2.6 - k * .95 - 5.75) * lay;
+
+// near side (behind the camera's start): checkout lanes with registers, a cart corral, a drinks fridge
+for (let k = -3; k <= 3; k++) group(() => { box(.7, .9, 2.4, mat(M.white), 0, .45, 0); box(.72, .06, 2.42, mat("#B9BCC3"), 0, .92, 0); rb(.32, .28, .3, .03, mat("#2a2b35"), 0, 1.1, -.6);
+  box(.04, 1.4, .04, mat("#8f93a3"), .3, 1.6, .9); rb(.3, .3, .06, .03, mat(k % 2 ? M.yel : M.grn), .3, 2.35, .9); }, k * 2.6 + (k > 0 ? 1.6 : k < 0 ? -1.6 : 9), 0, 9.5);
+group(() => { box(3.6, .06, .06, mat("#8f93a3"), 0, .9, 0); box(3.6, .06, .06, mat("#8f93a3"), 0, .3, 0); for (let k = 0; k <= 12; k++) box(.03, .9, .03, mat("#8f93a3"), -1.8 + k * .3, .45, 0); }, 6.9, 0, -3.8);
+group(() => { box(1.0, 1.9, .7, mat("#E9EEF2"), 0, .95, 0); box(.8, 1.3, .02, mat(M.navy), 0, 1.15, .36); for (let r = 0; r < 4; r++) for (let c = 0; c < 4; c++) cyl(.05, .05, .22, mat(PCOL[(r + c) % 5]), -.28 + c * .19, .62 + r * .3, .3, 12); }, 8.0, 0, -4.6);
+// a shopping cart and a promo stand where the car and A-frame barrier were
+function cart(x, z, ry) { group(() => { const W = mat("#C9CCD6");
+  box(.55, .03, .9, W, 0, .55, 0); for (let r = 0; r < 4; r++) { box(.55, .02, .02, W, 0, .6 + r * .1, .45); box(.55, .02, .02, W, 0, .6 + r * .1, -.45); box(.02, .02, .9, W, .27, .6 + r * .1, 0); box(.02, .02, .9, W, -.27, .6 + r * .1, 0); }
+  box(.6, .04, .04, mat(M.red), 0, 1.05, -.55); for (const [px, pz] of [[.22, .35], [-.22, .35], [.22, -.35], [-.22, -.35]]) { box(.03, .5, .03, W, px, .3, pz); const w = cyl(.06, .06, .04, mat("#1b1b22"), px, .06, pz, 12); w.rotation.z = Math.PI / 2; } }, x, 0, z, ry); }
+cart(-5.9, -1.4, 0); cart(-11, -1.2, Math.PI / 2);
+group(() => { box(.9, 1.2, .06, mat(M.yel), 0, .9, 0); box(.6, .5, .02, mat(M.red), 0, 1.0, .04); box(.06, .3, .4, mat("#8f93a3"), 0, .15, 0); }, -ROADW / 2 - .7, 0, -3.9, .3);
+
+// ---------- light: overhead store lighting, short soft-edged shadows straight down and slightly back ----------
+const amb = new THREE.AmbientLight("#ffffff", 2.35); scene.add(amb);
+const sun = new THREE.DirectionalLight("#ffffff", 0.9); sun.position.set(-4, 24, 20); sun.target.position.set(0, 0, -8); scene.add(sun, sun.target);   // from the front and above: lights walls and floor alike
+// full-height columns and walls don't cast (their long shadows striped the back wall); props, shelves and baskets do
+scene.updateMatrixWorld(true);
+const wp = new THREE.Vector3();
+scene.traverse((o) => { if (!o.isMesh) return; o.getWorldPosition(wp);
+  if (o.geometry.type === "BoxGeometry") { o.geometry.computeBoundingBox(); const b = o.geometry.boundingBox; if (b.max.y - b.min.y > 7) o.castShadow = false; }
+  if (wp.y > 6.5) o.castShadow = false; });                     // ceiling fittings and trays: no stripes on walls and floor scene.add(sun, sun.target);
+sun.castShadow = true; sun.shadow.mapSize.set(4096, 4096); Object.assign(sun.shadow.camera, { left: -30, right: 30, top: 30, bottom: -30, near: 1, far: 90 });
+sun.shadow.bias = -.0008; sun.shadow.normalBias = .09;
+
+// ---------- cameras: keyframes, blended as dolly zooms ----------
+// a shot = what it looks at (target), from which direction (yaw/pitch, deg), through what lens (fov), framing how wide (W, metres at the target)
+// The reference never tilts or turns its camera: it always faces straight down the street, level, so verticals stay
+// vertical. "Looking down" or "up" is done with lens shift (moving the horizon in the frame), like a tilt-shift lens.
+// Each shot below was solved from the reference frames' vanishing points, kerb lines and object sizes.
+// x: sideways position, y: camera height (m), zf: focus plane, W: width framed at the focus plane, fov: horizontal,
+// H: where the horizon sits (-1 bottom of frame, 0 centre, 1 top), lay: cone layout (0 kerb row, 1 diagonal)
+const SHOTS = {
+  flat:  { x: .15, y: 4.05, zf: -16, W: 14.4, fov: 2, H: 0, lay: 0, cs: 1.9 },     // telephoto: the whole street squashed flat
+  worm:  { x: .36, y: .65, zf: 3.3, W: 16.7, fov: 90, H: -.72, lay: 0, cs: 1.55 },  // knee height, horizon pushed low
+  high:  { x: 0, y: 7.5, zf: 3.3, W: 12.0, fov: 35, H: 1.73, lay: 0, cs: 1.55 },    // up high on a long lens, horizon above the frame
+  diag:  { x: .3, y: 4.7, zf: 3.3, W: 10.4, fov: 80, H: .69, lay: 1, cs: 1.55 },    // re-solved with the crossing width as the ruler
+  diag2: { x: .1, y: 2.6, zf: 3.3, W: 7.9, fov: 80, H: .5, lay: 1, cs: 1.55 },
+  low:   { x: .2, y: 2.9, zf: 3.3, W: 10.74, fov: 75, H: .14, lay: 1, cs: 1.55 },
+};
+const drift = (s, o) => ({ ...s, ...Object.fromEntries(Object.entries(o).map(([k, v]) => [k, k === "W" ? s.W * v : s[k] + v])) });
+Object.assign(SHOTS, { flat2: drift(SHOTS.flat, { W: .965 }), flatD: drift(SHOTS.flat, { W: .985, lay: 1 }), flat2D: drift(SHOTS.flat, { W: .965, lay: 1 }),
+  worm2: drift(SHOTS.worm, { x: .25, W: .95 }), high2: drift(SHOTS.high, { x: -.3, W: .95 }), diag1b: drift(SHOTS.diag, { x: .1, W: .94 }),
+  diag2b: drift(SHOTS.diag2, { x: .1, W: .93 }), low2: drift(SHOTS.low, { x: -.2, W: .95 }) });
+// timeline matched to the reference. The cone swap (lay 0 <-> 1) happens inside flat holds, where it can't be seen.
+const KEYS = [[0, "flat2"], [420, "flat"], [800, "worm"], [1300, "worm2"], [1600, "high"], [2300, "high2"], [2620, "flat"], [3000, "flatD"], [3380, "flat2D"],
+              [3700, "diag"], [4400, "diag1b"], [4650, "diag2"], [5350, "diag2b"], [5650, "low"], [6450, "low2"], [6820, "flat2D"], [6930, "flat2"], [7000, "flat2"]];
+const LOOP = 7000;
+const NAMES = KEYS.map((k) => k[1]), TIMES = KEYS.map((k) => k[0]);
+const PARAMS = (sh) => [sh.x, sh.y, sh.zf, Math.log(sh.W), Math.log(sh.fov), sh.H, sh.lay, sh.cs];
+const VALS = NAMES.map((n) => PARAMS(SHOTS[n]));
+// Fritsch-Carlson slopes per parameter: velocity is continuous through every key, and holds (equal keys) stay flat
+const SLOPES = VALS[0].map((_, j) => { const n = TIMES.length, d = [], m = new Array(n).fill(0);
+  for (let i = 0; i < n - 1; i++) d.push((VALS[i + 1][j] - VALS[i][j]) / (TIMES[i + 1] - TIMES[i]));
+  m[0] = d[0]; m[n - 1] = d[n - 2];
+  for (let i = 1; i < n - 1; i++) m[i] = d[i - 1] * d[i] <= 0 ? 0 : (d[i - 1] + d[i]) / 2;
+  for (let i = 0; i < n - 1; i++) { if (d[i] === 0) { m[i] = m[i + 1] = 0; continue; } const a_ = m[i] / d[i], b_ = m[i + 1] / d[i], h = a_ * a_ + b_ * b_; if (h > 9) { const t_ = 3 / Math.sqrt(h); m[i] = t_ * a_ * d[i]; m[i + 1] = t_ * b_ * d[i]; } }
+  m[0] = m[n - 1] = 0; return m; });   // ends flat so the loop joins seamlessly
+const cam = new THREE.PerspectiveCamera(30, ASPECT, .1, 4000);
+function shotAt(ms) {
+  let k = 0; while (k < TIMES.length - 2 && ms >= TIMES[k + 1]) k++;
+  const h = TIMES[k + 1] - TIMES[k], u = Math.min(1, Math.max(0, (ms - TIMES[k]) / h));
+  const h00 = 2 * u ** 3 - 3 * u ** 2 + 1, h10 = u ** 3 - 2 * u ** 2 + u, h01 = -2 * u ** 3 + 3 * u ** 2, h11 = u ** 3 - u ** 2;
+  const v = VALS[k].map((a_, j) => h00 * a_ + h10 * h * SLOPES[j][k] + h01 * VALS[k + 1][j] + h11 * h * SLOPES[j][k + 1]);
+  return { x: v[0], y: v[1], zf: v[2], W: Math.exp(v[3]), fov: Math.exp(v[4]), H: v[5], lay: Math.min(1, Math.max(0, v[6])), cs: v[7] };
+}
+function place(s) {
+  const hf = THREE.MathUtils.degToRad(s.fov), camZ = s.zf + (s.W / 2) / Math.tan(hf / 2);   // dolly zoom: W stays framed at zf
+  cam.fov = THREE.MathUtils.radToDeg(2 * Math.atan(Math.tan(hf / 2) / ASPECT));
+  cam.position.set(s.x, s.y, camZ); cam.lookAt(s.x, s.y, camZ - 1);                          // always level, always down the street
+  cam.near = Math.max(.05, Math.min(1, (camZ - 8) * .5)); cam.far = camZ - END + 60; cam.updateProjectionMatrix();
+  cam.projectionMatrix.elements[9] = -s.H;                                                   // lens shift: puts the horizon at H
+  cam.projectionMatrixInverse.copy(cam.projectionMatrix).invert();
+  CONES.forEach((c, k) => { c.position.z = coneZ(k, s.lay); c.scale.setScalar(s.cs); });   // drawn bigger in the flat view, like the reference
+}
+
+// ---------- illustration pass ----------
+// Colour, surface direction + depth, and a shadow mask are rendered separately; a final pass draws the ink lines
+// wherever depth or surface direction changes (so lines also appear where things meet, e.g. a cone on the road),
+// with noise-varied weight and a slight wobble, and hatches the cast shadows with light strokes, like the reference.
+const colorRT = new THREE.WebGLRenderTarget(PW, PH, { samples: 4, type: THREE.HalfFloatType });
+const nrmRT = new THREE.WebGLRenderTarget(PW, PH, { type: THREE.HalfFloatType }); nrmRT.depthTexture = new THREE.DepthTexture(PW, PH, THREE.FloatType);
+const shdRT = new THREE.WebGLRenderTarget(PW, PH);
+const normalMat = new THREE.MeshNormalMaterial({ side: THREE.DoubleSide });
+const shadowMat = new THREE.MeshLambertMaterial({ color: "#ffffff" });
+const post = new THREE.ShaderMaterial({ uniforms: { tC: { value: colorRT.texture }, tN: { value: nrmRT.texture }, tD: { value: nrmRT.depthTexture }, tS: { value: shdRT.texture },
+    res: { value: new THREE.Vector2(PW, PH) }, sky: { value: new THREE.Color(M.ceil) }, dbg: { value: 0 }, near: { value: .1 }, far: { value: 100 }, ink: { value: new THREE.Color("#0b0b14") } },
+  vertexShader: "varying vec2 vUv; void main(){ vUv = uv; gl_Position = vec4(position.xy, 0., 1.); }",
+  fragmentShader: `
+    uniform sampler2D tC, tN, tD, tS; uniform vec2 res; uniform float near, far; uniform vec3 ink, sky; uniform float dbg; varying vec2 vUv;
+    float hash(vec2 p){ return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+    float noise(vec2 p){ vec2 i = floor(p), f = fract(p); f = f*f*(3.-2.*f);
+      return mix(mix(hash(i), hash(i+vec2(1,0)), f.x), mix(hash(i+vec2(0,1)), hash(i+vec2(1,1)), f.x), f.y); }
+    float lin(float d){ return near * far / (far - d * (far - near)); }
+    vec3 toSRGB(vec3 c){ return mix(c * 12.92, 1.055 * pow(c, vec3(1./2.4)) - .055, step(.0031308, c)); }
+    // Lines where depth or surface direction changes. Depth uses the second difference (z+ + z- - 2z): a flat surface,
+    // even one seen almost edge-on like the road from knee height, has none, so it isn't inked by mistake.
+    float edgeAt(vec2 uv, float r){
+      vec2 px = r / res; float dc = texture2D(tD, uv).r; bool skyC = dc > .99999; float zc = lin(dc); vec3 nc = texture2D(tN, uv).xyz * 2. - 1.;
+      float e = 0.;
+      for (int k = 0; k < 4; k++) { float a = float(k) * .785398; vec2 o = vec2(cos(a), sin(a)) * px;
+        float d1 = texture2D(tD, uv + o).r, d2 = texture2D(tD, uv - o).r;
+        bool s1 = d1 > .99999, s2 = d2 > .99999;
+        if (skyC != s1 || skyC != s2) { e = 1.; continue; }
+        if (skyC) continue;
+        float z1 = lin(d1), z2 = lin(d2);
+        float kz = 1. + zc / 12.;                                       // far away, depth precision drops: demand a bigger jump
+        e = max(e, smoothstep(.006 * kz, .02 * kz, abs(z1 + z2 - 2. * zc) / zc));
+        vec3 n1 = texture2D(tN, uv + o).xyz * 2. - 1., n2 = texture2D(tN, uv - o).xyz * 2. - 1.;
+        e = max(e, smoothstep(.25, .5, 1. - min(dot(nc, n1), dot(nc, n2)))); }
+      return e; }
+    void main(){
+      vec2 p = vUv * res;
+      // wobble: displace the lookup a little along slow noise, so lines are not ruler-straight
+      vec2 wob = (vec2(noise(p * .045), noise(p * .045 + 17.3)) - .5) * 2.2 / res;
+      float w = 1.0 + .85 * noise(p * .02 + 5.);                  // line weight varies along strokes
+      float e = edgeAt(vUv + wob, w);
+      vec3 c = texture2D(tC, vUv).rgb;
+      float d = texture2D(tD, vUv).r; bool isSky = d > .99999;
+      if (isSky) c = sky;
+      float lit = texture2D(tS, vUv).r;
+      if (!isSky) {
+        vec3 nC = texture2D(tN, vUv).xyz * 2. - 1.;
+        float graze = smoothstep(.18, .4, abs(nC.z));                    // no hatching on surfaces seen nearly edge-on (ground from knee height)
+        float sh = (1. - smoothstep(.04, .14, lit)) * graze;           // 1 only where no direct sun reaches (cast shadow / turned away)
+        c *= mix(vec3(1.), vec3(.86, .88, 1.0), sh);                  // cool the shadows a touch
+        // hatching: fine diagonal strokes, broken up by noise, only inside shadow
+        float hx = (p.x - p.y) * .18 + noise(p * .03) * 3.;
+        float stroke = smoothstep(.86, .97, abs(sin(hx * 3.14159))) * step(.45, noise(p * vec2(.012, .05) + 3.));
+        c = mix(c, c + vec3(.07, .075, .09), stroke * sh * .9);
+      }
+      c = mix(c, ink, e * .95);
+      if (dbg > .5) c = texture2D(tC, vUv).rgb; if (dbg > 1.5) c = vec3(texture2D(tS, vUv).r);
+      gl_FragColor = vec4(toSRGB(clamp(c, 0., 1.)), 1.);
+    }` });
+const quad = new THREE.Mesh(new THREE.PlaneGeometry(2, 2), post); quad.frustumCulled = false;
+const postScene = new THREE.Scene(); postScene.add(quad); const postCam = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, 1);
+function draw() {
+  const bg = scene.background;
+  R.setRenderTarget(colorRT); R.render(scene, cam);
+  scene.background = null; scene.overrideMaterial = normalMat; R.setRenderTarget(nrmRT); R.setClearColor(0x000000, 0); R.clear(); R.render(scene, cam);
+  const si = sun.intensity; sun.intensity = 12;   // mask pass: any direct sun saturates to white, only true shadow stays dark
+  scene.overrideMaterial = shadowMat; amb.visible = false; R.setRenderTarget(shdRT); R.setClearColor(0x000000, 1); R.clear(); R.render(scene, cam);
+  sun.intensity = si; amb.visible = true; scene.overrideMaterial = null; scene.background = bg;
+  post.uniforms.near.value = cam.near; post.uniforms.far.value = cam.far;
+  R.setRenderTarget(null); R.render(postScene, postCam);
+}
+window.dbg = (v) => { post.uniforms.dbg.value = v; };
+window.render = (ms) => { ms = ((ms % LOOP) + LOOP) % LOOP; place(shotAt(ms)); draw(); };
+window.render(0);
+window.READY = Promise.resolve();
+</script>
